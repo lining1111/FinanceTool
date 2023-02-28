@@ -1,4 +1,4 @@
-package FinancialStatement
+package BalanceSheet
 
 //BalanceSheet 资产负债表 内有恒等式(Assets==LiabilityAndShareHoldersEquity)即资产合计一定等于负债及股东权益合计
 type BalanceSheet struct {

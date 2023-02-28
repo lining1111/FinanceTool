@@ -1,4 +1,4 @@
-package FinancialStatement
+package IncomeSheet
 
 //IncomeSheet 利润表
 type IncomeSheet struct {

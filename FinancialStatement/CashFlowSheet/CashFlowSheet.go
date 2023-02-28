@@ -1,4 +1,4 @@
-package FinancialStatement
+package CashFlowSheet
 
 //CashFlowSheet 现金流量表
 type CashFlowSheet struct {
