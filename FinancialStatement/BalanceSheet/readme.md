@@ -31,7 +31,7 @@
     PrepaidExpense 预付账款
     Inventory 存货
     NACHSADGCHS Non-current assets classified as held for sale and assets in disposal groups classified as held for sale被划分为持有待售的非流动资产及被划分为持有待售的处置组中的资产
-    AFS Available-for-sale financial assets可供出售金融资产
+    AFSFA Available-for-sale financial assets可供出售金融资产
     HTMSecurities held-to-maturity securities持有至到期投资
     DeferredExpense 待摊费用
     Others 其他
@@ -45,11 +45,11 @@
     IntangibleAssetsAndOtherAssets 无形及其他资产
     DeferredTaxAsset 递延所得税资产
 
-#####LiabilityAndShareHoldersEquity 负债及股东权益
+#####LiabilityAndEquity 负债及股东权益
     按偿还顺序
     CurrentLiability 流动负债
     LongTermLiability 长期负债
-    ShareholdersEquity 股东权益
+    Equity 股东权益
 
     第十九条 负债满足下列条件之一的，应当归类为流动负债：
     （一）预计在一个正常营业周期中清偿。
@@ -89,7 +89,7 @@
     EstimatedLiabilities 预计负债
     DeferredIncomeTaxLiabilities 递延所得税负债
     Others 其他
-######ShareholdersEquity 股东权益
+######Equity 股东权益
     PaidInCapital 股本
     CapitalReserves 资本公积
     SurplusReserves 盈余公积
