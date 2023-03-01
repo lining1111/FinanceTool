@@ -14,7 +14,7 @@
 #####Assets 资产
     按资产流动性
     CurrentAssets 流动资产
-    LongTermAssets 长期资产
+    NonCurrentAssets 非流动资产
 
     第十七条 资产满足下列条件之一的，应当归类为流动资产：
     （一）预计在一个正常营业周期中变现、出售或耗用。
@@ -27,9 +27,9 @@
 ######CurrentAssets 流动资产
     Cash 货币资金
     FVTOCI Fair Value through Other Comprehensive Income以公允价值计量且起变动计入其他综合收益
-    AccountsReceivable 应收账款
-    PrepaidExpense 预付账款
-    Inventory 存货
+    AccountReceivable 应收账款
+    AdvanceMoney 预付账款
+    Inventories 存货
     NACHSADGCHS Non-current assets classified as held for sale and assets in disposal groups classified as held for sale被划分为持有待售的非流动资产及被划分为持有待售的处置组中的资产
     AFSFA Available-for-sale financial assets可供出售金融资产
     HTMSecurities held-to-maturity securities持有至到期投资
@@ -37,12 +37,12 @@
     Others 其他
     TotalCurrentAssets 流动资产合计
 
-######LongTermAssets 长期资产
+######NonCurrentAssets 非流动资产
     LongTermInvestment 长期投资
     REHI Real Estate Held for Investment投资性房地产
     FixedAssets 固定资产
     BiologicalAsset 生物资产
-    IntangibleAssetsAndOtherAssets 无形及其他资产
+    IAOA Intangible Assets And Other Assets无形及其他资产 无形及其他资产
     DeferredTaxAsset 递延所得税资产
 
 #####LiabilityAndEquity 负债及股东权益
@@ -76,8 +76,8 @@
     ShortTermLoans 短期借款
     FVTPL Fair Value through Profit and Loss以公允价值计量且其变动计入当期损益的金融负债
     AccountsPayable 应付账款
-    UnearnedRevenue 预收款项
-    CompensationPayable 应付职工薪酬
+    DepositReceived 预收款项
+    AccruedWages 应付职工薪酬
     TaxPayable 应交税费
     CALHFS Classified as liabilities held for sale被划分为持有待售的处置组中的负债
     Others 其他
