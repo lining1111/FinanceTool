@@ -239,21 +239,3 @@ func (eq *Equity) CalTotal() float64 {
 	eq.Total = eq.PaidInCapital + eq.CapitalReserves + eq.SurplusReserves + eq.UndistributedProfits
 	return eq.Total
 }
-
-//---------------数值比率分析------------------//
-
-//资产负债率又称举债经营比率,它是用以衡量企业利用债权人提供资金进行经营活动的能力,以及反映债权人发放贷款的安全程度的指标,
-//通过将企业的负债总额与资产总额相比较得出,反映在企业全部资产中属于负债比率
-//如果资产负债比率达到100%或超过100%说明公司已经没有净资产或资不抵债
-//公式 资产负债率=总负债/总资产
-//总负债：指公司承担的各项负债的总和，包括流动负债和长期负债 资产总额：指公司拥有的各项资产的总和，包括流动资产和长期资产
-
-//CalRatioALie 计算资产负债率
-func (bs *BalanceSheet) CalRatioALie() float64 {
-	return bs.LEQ.Li.Total / bs.A.Total
-}
-
-//CalRatioACLie 计算资产流动负债率
-func (bs *BalanceSheet) CalRatioACLie() float64 {
-	return bs.LEQ.Li.Cli.Total / bs.A.Total
-}
