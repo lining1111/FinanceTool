@@ -77,6 +77,8 @@
     http://kjs.mof.gov.cn/zt/kjzzss/kuaijizhunzeshishi/200806/t20080618_46220.htm
     企业会计准则第29号——资产负债表日后事项
     http://kjs.mof.gov.cn/zt/kjzzss/kuaijizhunzeshishi/200806/t20080618_46219.htm
+    企业会计准则第30号——财务报表列报
+    http://kjs.mof.gov.cn/zt/kjzzss/kuaijizhunzeshishi/200806/t20080618_46218.htm
     企业会计准则第31号——现金流量表
     http://kjs.mof.gov.cn/zt/kjzzss/kuaijizhunzeshishi/200806/t20080618_46250.htm
     企业会计准则第32号——中期财务报告

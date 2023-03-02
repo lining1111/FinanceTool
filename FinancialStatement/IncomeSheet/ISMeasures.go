@@ -9,3 +9,8 @@ func (is *IncomeSheet) IC() float64 {
 func (is *IncomeSheet) NPR() float64 {
 	return is.NetProfit / is.Revenue
 }
+
+//GIR 15.销售毛利率=(销售收入-销售成本)/销售成本 标准值 0.15
+func (is *IncomeSheet) GIR() float64 {
+	return (is.Revenue - is.SellingExpense) / is.SellingExpense
+}
