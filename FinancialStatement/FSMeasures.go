@@ -1,6 +1,34 @@
 package FinancialStatement
 
-import "github.com/golang/glog"
+import (
+	"github.com/golang/glog"
+	"time"
+)
+
+type FSMeasures struct {
+	ComCd     string //公司代码 如果公司发行了A股，则公司代码=C+A股代码，如果仅发现B股，则公司代码=C+B股代码
+	StkCd     string //股票代码
+	StkCdOTrd string //交易时股票代码
+	A_StkCd   string //A股代码
+	B_StkCd   string //B股代码
+	LComNm    string //最新公司全称
+	LstFlg    string //上市标识 按A。B。H股的顺序，依次列出该公司上市的股票类型。例如：如果公司只发B股，则记为B；如果公司既发A股又发B股则记为AB；如果公司既发B股又发H股则记为BH；
+	//报表信息
+	EndDT         time.Time //截至日期
+	ReportDT      time.Time //报表日期
+	InfoSourceflg string    //信息来源标识 Q1一季度 Q2中报 Q3三季度 Q4年报 0-其他
+	InfoSource    string    //信息来源 Q1一季度；中报；三季度；年报；股份报价转让说明书；上市公司报告书；增发A股招股意向书；招股说明书；招股意向书；增发新股上市公告书
+	ReportType    string    //报表类型 Q1一季度，Q2中报 Q3三季度 Q4年报 0-其他
+	CR            float64   //Current Ratio 流动比率=流动资产/流动负债
+	QR            float64   //Quick Ratio 速动比率=(流动资产=存货)/流动负债
+	SQR           float64   //Super Quick Ratio 超速动比率=(现金+短期债券+应收票据+应收账款净额)/流动负债
+	WCAR          float64   //Working Capital Assets Ratio 营运资金/资产总额=(流动资产-流动负债)/平均资产总额
+	IC            float64   //Interest Cover 利息保障倍数=息税前利润/利息费用
+	RC            float64   //Repayment Cover 偿债倍数=EBIT/((利息+本金偿还)/(1-所得税税率)) TODO
+	DAR           float64   //Debt Assets Ratio 资产负债率
+	LDWC          float64   //Long Debt to Working Capital 长期负债与营运资金比率=长期负债/(流动资产-流动负债)
+	EBIT          float64   //系税前利润=利润总额+利息支出=净利润+所得税+利息支出
+}
 
 /**
 财务报表的26个指标
@@ -121,7 +149,7 @@ import "github.com/golang/glog"
 
 //ITR 3.存货周转率=产品销售成本/((初期存货+期末存货)/2)
 func (fs *FinanceStatement) ITR() float64 {
-	return fs.ISU.Now.SellingExpense / ((fs.BSU.Last.A.CA.Inventories + fs.BSU.Now.A.CA.Inventories) / 2)
+	return fs.ISU.Now.SellingExpense / ((fs.BSU.Last.A.CA.INV + fs.BSU.Now.A.CA.INV) / 2)
 }
 
 //ITD 4.存货周转天数=360/存货周转率=(360(初期存货+期末存货)/2)/产品销售成本
@@ -131,7 +159,7 @@ func (fs *FinanceStatement) ITD() float64 {
 
 //ARTR 5.应收账款周转率=销售收入/(期初应收账款+期末应收账款)/2 标准值 3
 func (fs *FinanceStatement) ARTR() float64 {
-	return fs.ISU.Now.Revenue / ((fs.BSU.Last.A.CA.AccountReceivable + fs.BSU.Now.A.CA.AccountReceivable) / 2)
+	return fs.ISU.Now.Revenue / ((fs.BSU.Last.A.CA.AR + fs.BSU.Now.A.CA.AR) / 2)
 }
 
 //ARTD 6.应收账款周转天数=360/应收账款周转率 标准值 100
@@ -166,7 +194,7 @@ func (fs *FinanceStatement) ROE() float64 {
 
 //OCDB 18.现金到期债务比=经营活动现金净流量/本期到期的债务 标准值 1.5 本期到期债务=一年内到期的长期债务+应付票据
 func (fs *FinanceStatement) OCDB() float64 {
-	dueDebt := fs.BSU.Now.LEQ.Li.Cli.ShortTermLoans + fs.BSU.Now.LEQ.Li.Cli.AccountsPayable
+	dueDebt := fs.BSU.Now.LEQ.Li.Cli.ShortTermLoans + fs.BSU.Now.LEQ.Li.Cli.AP
 	glog.Info("本期到期债务：短期借款+应付账款")
 	return fs.CSU.Now.OCF.Total / dueDebt
 }

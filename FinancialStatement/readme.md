@@ -18,6 +18,10 @@
 
     参考企业会计准则第30号---财务报表列报 
     http://kjs.mof.gov.cn/zt/kjzzss/kuaijizhunzeshishi/200806/t20080618_46218.htm
+    中华人民共和国财政部财政文告
+    http://www.mof.gov.cn/gkml/caizhengwengao/
+    具体内容参考 财政部关于修订印发2019年度一般企业财务报表格式的通知
+    http://www.mof.gov.cn/gkml/caizhengwengao/wg201901/wg201905/201909/t20190912_3385305.htm
     分为三张表:
     BalanceSheet 资产负债表
     IncomeSheet 利润表

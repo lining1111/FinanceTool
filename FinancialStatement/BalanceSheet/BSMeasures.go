@@ -9,13 +9,24 @@ func (bs *BalanceSheet) CR() float64 {
 
 //QR 2.速动比率=(流动资产合计-存货)/流动负债合计  保守值=(现金+短期投资+应收票据+应收账款)/流动负债   标准值1/0.8
 func (bs *BalanceSheet) QR() (v float64, vConservative float64) {
-	v = (bs.A.CA.Total - bs.A.CA.Inventories) / bs.LEQ.Li.Cli.Total
+	v = (bs.A.CA.Total - bs.A.CA.INV) / bs.LEQ.Li.Cli.Total
 
-	qaConservative := bs.A.CA.Cash + bs.A.CA.FVTOCI + bs.A.CA.AccountReceivable
+	qaConservative := bs.A.CA.Cash + bs.A.CA.TFA + bs.A.CA.AR
 
 	glog.Info("保守流动资产值：%v", qaConservative)
 	vConservative = qaConservative / bs.LEQ.Li.Cli.Total
 	return
+}
+
+//SQR Super Quick Ratio 超速动比率=(现金+短期债券+应收票据+应收账款净额)/流动负债
+func (bs *BalanceSheet) SQR() float64 {
+	quick := bs.A.CA.Cash + bs.A.CA.TFA + bs.A.CA.AR
+	return quick / bs.LEQ.Li.Cli.Total
+}
+
+//WCAR Working Capital Assets Ratio 营运资金/资产总额=(流动资产-流动负债)/平均资产总额
+func (bs BalanceSheet) WCAR() float64 {
+	return (bs.A.CA.Total - bs.LEQ.Li.Cli.Total) / bs.A.Total
 }
 
 //DAR 10.资产负债率=负债总额/资产总额 标准值 0.7
@@ -30,5 +41,10 @@ func (bs *BalanceSheet) DER() float64 {
 
 //DTER 12.有形净值债务率=负债总额/(股东权益-无形资产净值) 标准值 1.5
 func (bs *BalanceSheet) DTER() float64 {
-	return bs.LEQ.Li.Total / (bs.LEQ.Eq.Total - bs.A.NCA.IAOA)
+	return bs.LEQ.Li.Total / (bs.LEQ.Eq.Total - bs.A.NCA.IA)
+}
+
+//LDWC Long Debt to Working Capital 长期负债与营运资金比率=长期负债/(流动资产-流动负债)
+func (bs *BalanceSheet) LDWC() float64 {
+	return bs.LEQ.Li.Ltli.Total / (bs.A.CA.Total - bs.LEQ.Li.Cli.Total)
 }
