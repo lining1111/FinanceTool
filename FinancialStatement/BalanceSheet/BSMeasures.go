@@ -2,7 +2,12 @@ package BalanceSheet
 
 import "github.com/golang/glog"
 
-//CR 1.流动比率=流动资产合计/流动负债合计	标准值 2.0
+//DAR 资产负债率=负债总额/资产总额 标准值 0.7
+func (bs *BalanceSheet) DAR() float64 {
+	return bs.LEQ.Li.Total / bs.A.Total
+}
+
+//CR 流动比率=流动资产合计/流动负债合计	标准值 2.0
 func (bs *BalanceSheet) CR() float64 {
 	return bs.A.CA.Total / bs.LEQ.Li.Cli.Total
 }
@@ -24,24 +29,24 @@ func (bs *BalanceSheet) SQR() float64 {
 	return quick / bs.LEQ.Li.Cli.Total
 }
 
-//WCAR Working Capital Assets Ratio 营运资金/资产总额=(流动资产-流动负债)/平均资产总额
-func (bs BalanceSheet) WCAR() float64 {
-	return (bs.A.CA.Total - bs.LEQ.Li.Cli.Total) / bs.A.Total
-}
-
-//DAR 10.资产负债率=负债总额/资产总额 标准值 0.7
-func (bs *BalanceSheet) DAR() float64 {
-	return bs.LEQ.Li.Total / bs.A.Total
-}
-
 //DER 11.产权比率=负债总额/股东权益 标准值 1.2
 func (bs *BalanceSheet) DER() float64 {
 	return bs.LEQ.Li.Total / bs.LEQ.Eq.Total
 }
 
-//DTER 12.有形净值债务率=负债总额/(股东权益-无形资产净值) 标准值 1.5
-func (bs *BalanceSheet) DTER() float64 {
-	return bs.LEQ.Li.Total / (bs.LEQ.Eq.Total - bs.A.NCA.IA)
+//AER 权益乘数=资产总和/股东权益
+func (bs *BalanceSheet) AER() float64 {
+	return bs.A.Total / bs.LEQ.Eq.Total
+}
+
+//NWC 净运营资本=流动资产-流动负债
+func (bs *BalanceSheet) NWC() float64 {
+	return bs.A.CA.Total - bs.LEQ.Li.Cli.Total
+}
+
+//CashRatio 现金比率=(现金+交易性金融资产)/流动负债
+func (bs *BalanceSheet) CashRatio() float64 {
+	return (bs.A.CA.Cash + bs.A.CA.TFA) / bs.LEQ.Li.Cli.Total
 }
 
 //LDWC Long Debt to Working Capital 长期负债与营运资金比率=长期负债/(流动资产-流动负债)

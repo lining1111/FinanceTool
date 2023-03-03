@@ -26,3 +26,8 @@ func (isu *ISUnit) Check() bool {
 }
 
 //---------------数值比率分析------------------//
+
+//NPGR 净利润增长率=(期末净利润-期初净利润)/期初净利润
+func (isu *ISUnit) NPGR() float64 {
+	return (isu.Now.NetProfit - isu.Last.NetProfit) / isu.Last.NetProfit
+}

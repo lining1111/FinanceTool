@@ -27,3 +27,13 @@ func (csu *CSUnit) Check() bool {
 }
 
 //---------------数值比率分析------------------//
+
+//SGR 销售增长率=(期末营业收入-期初营业收入)/期初营业收入
+func (csu *CSUnit) SGR() float64 {
+	return (csu.Now.OCF.In.Subtotal - csu.Last.OCF.In.Subtotal) / csu.Last.OCF.In.Subtotal
+}
+
+//SPGR 营业利润增长率=(期末营业利润-期初营业利润)/期初营业利润
+func (csu *CSUnit) SPGR() float64 {
+	return (csu.Now.OCF.Total - csu.Last.OCF.Total) / csu.Last.OCF.Total
+}
