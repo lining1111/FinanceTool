@@ -4,415 +4,139 @@ package BalanceSheet
 资产负债表，数据类计算
 */
 
-import (
-	"errors"
-	"github.com/golang/glog"
-	"time"
-)
-
 //BalanceSheet 资产负债表 内有恒等式(Assets==LiabilityAndShareHoldersEquity)即资产合计一定等于负债及股东权益合计
 type BalanceSheet struct {
-	A     Assets
-	LEQ   LiabilityAndEquity
-	CTime time.Time //表的时间
-	Unit  float64   //人民币金额单位
-}
+	SECNAME     string  //证券简称
+	SECCODE     string  //证券代码
+	ORGNAME     string  //机构名称
+	DECLAREDATE string  //公告日期
+	ENDDATE     string  //截止日期
+	F001D       string  //报告年度
+	F002V       string  //合并类型编码
+	F003V       string  //合并类型
+	F004V       string  //报表来源编码
+	F005V       string  //报表来源
+	F006N       float64 //货币资金
+	F077N       float64 //结算备付金
+	F078N       float64 //拆出资金
+	F007N       float64 //以公允价值计量且其变动计入当期损益的金融资产(20190322弃用)
+	F080N       float64 //衍生金融资产
+	F008N       float64 //应收票据
+	F009N       float64 //应收账款
+	F010N       float64 //预付款项
+	F081N       float64 //应收保费
+	F082N       float64 //应收分保账款
+	F083N       float64 //应收分保合同准备金
+	F013N       float64 //其中：应收利息
+	F014N       float64 //其中：应收股利
+	F011N       float64 //其他应收款
+	F012N       float64 //应收关联公司款
+	F084N       float64 //买入返售金融资产
+	F015N       float64 //存货
+	F016N       float64 //其中：消耗性生物资产
+	F085N       float64 //划分为持有待售的资产
+	F079N       float64 //发放贷款及垫款-流动资产
+	F017N       float64 //一年内到期的非流动资产
+	F117N       float64 //交易性金融资产
+	F118N       float64 //应收票据及应收账款
+	F119N       float64 //合同资产
+	F018N       float64 //其他流动资产
+	F019N       float64 //流动资产合计
 
-func (bs *BalanceSheet) Check() bool {
-	//单元素检查
-	if !bs.A.Check() {
-		glog.Error("BalanceSheet Check A fail,year:%v", bs.CTime.String())
-		return false
-	}
-	if !bs.LEQ.Check() {
-		glog.Error("BalanceSheet Check LEQ fail,year:%v", bs.CTime.String())
-		return false
-	}
-	//联合检查
-	ret, err := bs.CheckIdentity()
-	if err != nil {
-		glog.Error("BalanceSheet Check Identity fail,year:%v", bs.CTime.String())
-	}
-	return ret
-}
+	F086N float64 //发放贷款及垫款-非流动资产
+	F020N float64 //可供出售金融资产
+	F021N float64 //持有至到期投资
+	F022N float64 //长期应收款
+	F023N float64 //长期股权投资
+	F024N float64 //投资性房地产
+	F025N float64 //固定资产
+	F026N float64 //在建工程
+	F027N float64 //工程物资
+	F028N float64 //固定资产清理
+	F029N float64 //生产性生物资产
+	F030N float64 //油气资产
+	F031N float64 //无形资产
 
-func (bs *BalanceSheet) CheckIdentity() (bool, error) {
-	if bs.A.Total > bs.LEQ.Total {
-		return false, errors.New("资产多于负债")
-	} else if bs.A.Total < bs.LEQ.Total {
-		return false, errors.New("资产少于负债")
-	} else {
-		return true, nil
-	}
-}
+	F032N float64 //开发支出
+	F033N float64 //商誉
+	F034N float64 //长期待摊费用
+	F035N float64 //递延所得税资产
+	F116N float64 //债权投资
+	F110N float64 //其他债权投资
+	F111N float64 //其他权益工具投资
+	F112N float64 //其他非流动金融资产
+	F036N float64 //其他非流动资产
+	F037N float64 //非流动资产合计
 
-//Assets 资产
-type Assets struct {
-	CA    CurrentAssets
-	NCA   NonCurrentAssets
-	Total float64 //合计
-}
+	F038N float64 //资产总计
 
-func (a *Assets) Check() bool {
-	if !a.CA.Check() {
-		glog.Error("Assets Check CA fail")
-		return false
-	}
+	F039N float64 //短期借款
+	F087N float64 //向中央银行借款
+	F088N float64 //吸收存款及同业存放
+	F089N float64 //拆入资金
+	F040N float64 //以公允价值计量且其变动计入当期损益的金融负债（20190322弃用
+	F090N float64 //衍生金融负债
+	F041N float64 //应付票据
+	F042N float64 //应付账款
+	F043N float64 //预收款项
+	F091N float64 //卖出回购金融资产款
+	F092N float64 //应付手续费及佣金
+	F044N float64 //应付职工薪酬
+	F045N float64 //应交税费
+	F046N float64 //其中：应付利息
+	F047N float64 //其中：应付股利
+	F048N float64 //其他应付款
+	F049N float64 //应付关联公司款
+	F093N float64 //应付分保账款
+	F094N float64 //保险合同准备金
+	F095N float64 //代理买卖证券款
+	F096N float64 //代理承销证券款
+	F097N float64 //划分为持有待售的负债
+	F050N float64 //一年内到期的非流动负债
+	F098N float64 //预计负债-流动负债
+	F099N float64 //递延收益-流动负债
+	F113N float64 //交易性金融负债
+	F114N float64 //应付票据及应付账款
+	F115N float64 //合同负债
+	F051N float64 //其他流动负债
+	F052N float64 //流动负债合计
 
-	if !a.NCA.Check() {
-		glog.Error("Assets Check NCA fail")
-		return false
-	}
+	F053N float64 //长期借款
+	F054N float64 //应付债券
+	F100N float64 //其中：优先股-非流动负债
+	F101N float64 //永续债-非流动负债
+	F055N float64 //长期应付款
+	F102N float64 //长期应付职工薪酬
+	F056N float64 //专项应付款
+	F057N float64 //预计负债
+	F075N float64 //递延收益-非流动负债
+	F058N float64 //递延所得税负债
+	F059N float64 //其他非流动负债
+	F060N float64 //非流动负债合计
 
-	total := a.CalTotal()
-	return a.Total == total
-}
+	F061N float64 //负债合计
 
-func (a *Assets) CalTotal() float64 {
-	total := a.CA.Total + a.NCA.Total
-	if a.Total > 0 {
-		if total != a.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, a.Total)
-		}
-	} else {
-		a.Total = total
-	}
+	F062N float64 //实收资本（或股本）
+	F103N float64 //其他权益工具
+	F104N float64 //其中：优先股-所有者权益
+	F105N float64 //永续债-所有者权益
+	F063N float64 //资本公积
+	F066N float64 //减：库存股
+	F074N float64 //其他综合收益
+	F072N float64 //专项储备
+	F064N float64 //盈余公积
+	F076N float64 //一般风险准备
+	F065N float64 //未分配利润
+	F068N float64 //外币报表折算价差
+	F073N float64 //归属于母公司所有者权益
+	F067N float64 //少数股东权益
+	F069N float64 //非正常经营项目收益调整
+	F070N float64 //所有者权益（或股东权益）合计
 
-	return a.Total
-}
+	MEMO string //备注
 
-//CurrentAssets 流动资产
-type CurrentAssets struct {
-	Cash           float64          //货币资金
-	FVTOCI         float64          //交易性金融资产 FVTOCI
-	DFI            float64          //衍生金融资产 Derivative Financial Instrument
-	BR             float64          //应收票据 bill receivable
-	AR             float64          //应收账款 Account Receivable
-	ARF            float64          //应收款项融资 accounts receivable financing
-	AP             float64          //预付账款 Advance Payment
-	OR             OtherReceivables //其他应收款 other receivables
-	INV            float64          //存货 Inventory
-	ContractAssets float64          //合同资产 Contract Assets
-	AHFS           float64          //持有待售资产 Assets Held for Sale
-	NCAMWOY        float64          //一年内到期的非流动资产 Non-current Asset Matured within One-Year
-	Others         float64          //其他
-	Total          float64          //流动资产合计
-}
+	F120N float64 //应收款项融资 2019年8月新增
+	F121N float64 //使用权资产 2019年8月新增
+	F122N float64 //租赁负债	2019年8月新增
 
-type OtherReceivables struct {
-	InterestReceivable  float64 //应收利息
-	DividendsReceivable float64 //应收股利
-	Others              float64 //其他应收款
-	BadDebtReserves     float64 //减：坏账准备
-	Total               float64 //合计
-}
-
-func (or *OtherReceivables) CalTotal() float64 {
-
-	total := or.InterestReceivable + or.DividendsReceivable + or.Others - or.BadDebtReserves
-	if or.Total > 0 {
-		if total != or.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, or.Total)
-		}
-	} else {
-		or.Total = total
-	}
-
-	return or.Total
-}
-
-func (ca *CurrentAssets) Check() bool {
-	total := ca.CalTotal()
-	return ca.Total == total
-}
-
-func (ca *CurrentAssets) CalTotal() float64 {
-	total := ca.Cash + ca.FVTOCI + ca.DFI + ca.BR + ca.AR + ca.ARF + ca.AP + ca.OR.CalTotal() +
-		ca.INV + ca.ContractAssets + ca.AHFS + +ca.NCAMWOY + ca.Others
-
-	if ca.Total > 0 {
-		if total != ca.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, ca.Total)
-		}
-	} else {
-		ca.Total = total
-	}
-
-	return ca.Total
-}
-
-//NonCurrentAssets 非流动资产
-type NonCurrentAssets struct {
-	DebtInvestment   float64 //债权投资 Debt investment
-	ODebtInvestment  float64 //其他债权投资 Other Debt investment
-	LTR              float64 //长期应收款 Long-term Receivable
-	LTIOS            float64 //长期股权投资 Long-term investment on stocks
-	OEII             float64 //其他权益工具投资 Other equity instrument investment
-	ONCFA            float64 //其他非流动金融资产 other non-current financial assets
-	REHI             float64 //投资性房地产 Real Estate Held for Investment
-	FixedAssets      float64 //固定资产 FixedAssets
-	CIP              float64 //在建工程 Construction In Progress
-	BiologicalAsset  float64 //生产性生物资产 BiologicalAsset
-	OGA              float64 //油气资产 Oil and gas assets
-	ROA              float64 //使用权资产 right of assets
-	IA               float64 //无形资产 Intangible Assets
-	DE               float64 //开发支出 Development Expenditure
-	Goodwill         float64 //商誉 Goodwill
-	LTPE             float64 //长期待摊费用 Long-term prepaid expenses
-	DeferredTaxAsset float64 //递延所得税资产 DeferredTaxAsset
-	Others           float64 //其他非流动资产 Other non-current Assets
-	Total            float64 //合计
-}
-
-func (nca *NonCurrentAssets) Check() bool {
-	total := nca.CalTotal()
-	return nca.Total == total
-}
-
-func (nca *NonCurrentAssets) CalTotal() float64 {
-	total := nca.DebtInvestment + nca.LTR + nca.LTIOS + nca.OEII + nca.ONCFA + nca.REHI +
-		nca.FixedAssets + nca.CIP + nca.BiologicalAsset + nca.OGA + nca.IA + nca.DE + nca.Goodwill + nca.LTPE + nca.DeferredTaxAsset + nca.Others
-	if nca.Total > 0 {
-		if total != nca.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, nca.Total)
-		}
-	} else {
-		nca.Total = total
-	}
-
-	return nca.Total
-}
-
-//LiabilityAndEquity 负债及股东权益
-type LiabilityAndEquity struct {
-	Li    Liability
-	Eq    Equity
-	Total float64 //合计
-}
-
-func (leq *LiabilityAndEquity) Check() bool {
-	if !leq.Li.Check() {
-		glog.Error("LiabilityAndEquity Check Li fail")
-		return false
-	}
-
-	if !leq.Eq.Check() {
-		glog.Error("LiabilityAndEquity Check Eq fail")
-		return false
-	}
-
-	total := leq.CalTotal()
-	return leq.Total == total
-}
-
-func (leq *LiabilityAndEquity) CalTotal() float64 {
-	total := leq.Li.Total + leq.Eq.Total
-	if leq.Total > 0 {
-		if total != leq.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, leq.Total)
-		}
-	} else {
-		leq.Total = total
-	}
-
-	return leq.Total
-}
-
-//Liability 负债
-type Liability struct {
-	CL    CurrentLiability
-	NCL   NonCurrentLiability
-	Total float64
-}
-
-func (li *Liability) Check() bool {
-	if !li.CL.Check() {
-		glog.Error("Liability Check CL fail")
-		return false
-	}
-
-	if !li.NCL.Check() {
-		glog.Error("Liability Check NCL fail")
-		return false
-	}
-
-	total := li.CalTotal()
-	return li.Total == total
-}
-
-func (li *Liability) CalTotal() float64 {
-	total := li.CL.Total + li.NCL.Total
-	if li.Total > 0 {
-		if total != li.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, li.Total)
-		}
-	} else {
-		li.Total = total
-	}
-
-	return li.Total
-}
-
-//CurrentLiability 流动负债
-type CurrentLiability struct {
-	ShortTermLoans float64      //短期借款 ShortTermLoans
-	TFL            float64      //交易性金融负债 tradable financial liabilities
-	DFL            float64      //衍生金融负债 Derivative financial liabilities
-	BP             float64      //应付票据 bills payable
-	AP             float64      //应付账款 Accounts Payable
-	DR             float64      //预收款项 Deposit Received
-	CL             float64      //合同负债 Contractual liabilities
-	AccruedWages   float64      //应付职工薪酬 AccruedWages
-	TaxPayable     float64      //应交税费 TaxPayable
-	OP             OtherPayable //其他应付款 Other payable
-	LHFS           float64      //持有待售负债 Liabilities held for sale
-	NCLMWOY        float64      //一年内到期的非流动负债 Non-current Liabilities Matured within One-Year
-	Others         float64      //其他 Others
-	Total          float64      //流动负债合计
-}
-
-type OtherPayable struct {
-	InterestPayable  float64
-	DividendsPayable float64
-	Others           float64
-	Total            float64
-}
-
-func (op *OtherPayable) CalTotal() float64 {
-
-	total := op.InterestPayable + op.DividendsPayable + op.Others
-	if op.Total > 0 {
-		if total != op.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, op.Total)
-		}
-	} else {
-		op.Total = total
-	}
-
-	return op.Total
-}
-
-func (cl *CurrentLiability) Check() bool {
-	total := cl.CalTotal()
-	return cl.Total == total
-}
-
-func (cl *CurrentLiability) CalTotal() float64 {
-	total := cl.ShortTermLoans + cl.TFL + cl.DFL + cl.BP + cl.AP + cl.DR + cl.CL +
-		cl.AccruedWages + cl.TaxPayable + cl.OP.CalTotal() + cl.LHFS + cl.NCLMWOY + cl.Others
-
-	if cl.Total > 0 {
-		if total != cl.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, cl.Total)
-		}
-	} else {
-		cl.Total = total
-	}
-
-	return cl.Total
-}
-
-//NonCurrentLiability 非流动负债
-type NonCurrentLiability struct {
-	LongTermLoans                float64      //长期借款 LongTermLoans
-	BondsPayable                 BondsPayable //应付债券 其中分为：优先股和永续债
-	LeaseLiabilities             float64      //租赁负债 Lease liabilities
-	LongTermPayable              float64      //长期应付款 LongTermPayable
-	EstimatedLiabilities         float64      //预计负债 EstimatedLiabilities
-	DeferredIncome               float64      //递延收益 Deferred Income
-	DeferredIncomeTaxLiabilities float64      //递延所得税负债 DeferredIncomeTaxLiabilities
-	Others                       float64      //其他 Others
-	Total                        float64      //合计
-}
-
-//BondsPayable 应付债券
-type BondsPayable struct {
-	PFD   float64 //优先股
-	PN    float64 //永续债
-	Total float64
-}
-
-func (bp *BondsPayable) CalTotal() float64 {
-
-	total := bp.PFD + bp.PN
-	if bp.Total > 0 {
-		if total != bp.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, bp.Total)
-		}
-	} else {
-		bp.Total = total
-	}
-
-	return bp.Total
-}
-
-func (ncl *NonCurrentLiability) Check() bool {
-	total := ncl.CalTotal()
-	return ncl.Total == total
-}
-
-func (ncl *NonCurrentLiability) CalTotal() float64 {
-	total := ncl.LongTermLoans + ncl.BondsPayable.CalTotal() + ncl.LeaseLiabilities +
-		ncl.LongTermPayable + ncl.EstimatedLiabilities + ncl.DeferredIncome + ncl.DeferredIncomeTaxLiabilities + ncl.Others
-	if ncl.Total > 0 {
-		if total != ncl.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, ncl.Total)
-		}
-	} else {
-		ncl.Total = total
-	}
-
-	return ncl.Total
-}
-
-//Equity 股东权益
-type Equity struct {
-	PaidInCapital        float64                //实收资本(股本) PaidInCapital
-	OEI                  OtherEquityInstruments //其他权益工具 Other equity instruments 其中分为：优先股和永续债
-	CapitalReserves      float64                //资本公积 CapitalReserves
-	TreasuryStock        float64                //减：库存股 Treasury stock
-	OCI                  float64                //其他综合收益 Other comprehensive income
-	SpecialReserve       float64                //专项储备 Special reserve
-	SurplusReserves      float64                //盈余公积,在盈余公积未达到注册资本的50%时,最低应是税后利润的10%,作用是公司亏损之时弥补其资金上的短缺，增强公司经营的稳定性
-	UndistributedProfits float64                //未分配利润 UndistributedProfits
-	Total                float64                //合计
-}
-
-type OtherEquityInstruments struct {
-	PFD   float64 //优先股
-	PN    float64 //永续债
-	Total float64
-}
-
-func (oei *OtherEquityInstruments) CalTotal() float64 {
-
-	total := oei.PFD + oei.PN
-	if oei.Total > 0 {
-		if total != oei.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, oei.Total)
-		}
-	} else {
-		oei.Total = total
-	}
-
-	return oei.Total
-}
-
-func (eq *Equity) Check() bool {
-	total := eq.CalTotal()
-	return eq.Total == total
-}
-
-func (eq *Equity) CalTotal() float64 {
-	total := eq.PaidInCapital + eq.OEI.CalTotal() + eq.CapitalReserves - eq.TreasuryStock +
-		eq.OCI + eq.SpecialReserve + eq.SurplusReserves + eq.UndistributedProfits
-	if eq.Total > 0 {
-		if total != eq.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, eq.Total)
-		}
-	} else {
-		eq.Total = total
-	}
-
-	return eq.Total
 }

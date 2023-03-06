@@ -4,135 +4,75 @@ package IncomeSheet
 利润表，数据类计算
 */
 
-import (
-	"github.com/golang/glog"
-	"time"
-)
-
 //IncomeSheet 利润表
 type IncomeSheet struct {
-	Revenue                      float64          //营业收入 Revenue
-	CostOfSales                  float64          //减：营业成本 CostOfSales
-	TaxesAndSurcharge            float64          //减：税金及附加 TaxesAndSurcharge
-	SellingExpense               float64          //减：销售费用 SellingExpense
-	GAExpense                    float64          //减：管理费用 GAExpense
-	RDExpense                    float64          //减：研发费用 RDExpense
-	FinanceExpense               FinanceExpense   //减：财务费用 其中：利息费用+利息收入
-	OtherIncome                  float64          //其他收益 OtherIncome
-	InvestmentIncome             InvestmentIncome //投资收益 损失以“-”号填列 其中：对联营企业和合营企业的投资收益 以摊余成本计量的金融资产终止确认收益（损失以“-”号填列）
-	NEHI                         float64          //净敞口套期收益（损失以“-”号填列） Net exposure hedging income
-	IncomeFromChangesInFairValue float64          //公允价值变动收益 损失以“-”号填列
-	CreditImpairmentLoss         float64          //信用减值损失（损失以“-”号填列）
-	AssetsImpairmentLoss         float64          //资产减值损失 损失以“-”号填列
-	IFAD                         float64          //资产处置收益（损失以“-”号填列）Income from asset disposal
-	OperationProfit              float64          //营业利润 亏损以“-”号填列
-	NonOperatingIncome           float64          //加： 营业外收入
-	NonOperatingExpense          float64          //减： 营业外支出
-	TotalProfit                  float64          //利润总额 TotalProfit
-	IncomeTax                    float64          //企业所得税 IncomeTax
-	NetProfit                    float64          //净利润 NetProfit
-	OCI                          float64          //其他综合收益各项目分别扣除所得税影响后的净额 Other Comprehensive Income
-	Total                        float64
-	EPS                          EarningsPerShare //每股收益：基本每股收益+稀释每股收益
-	CTime                        time.Time        //表的时间
-	Unit                         float64          //人民币金额单位
+	SECNAME     string //证券简称
+	SECCODE     string //证券代码
+	ORGNAME     string //机构名称
+	DECLAREDATE string //公告日期
+	ENDDATE     string //截止日期
+	F001D       string //报告年度
+	F002V       string //合并类型编码
+	F003V       string //合并类型
+	F004V       string //报表来源编码
+	F005V       string //报表来源
+
+	F035N float64 //一、营业总收入
+	F006N float64 //其中：营业收入
+	F033N float64 //利息收入
+	F034N float64 //已赚保费
+	F042N float64 //手续费及佣金收入
+	F036N float64 //二、营业总成本
+	F007N float64 //其中：营业成本
+	F043N float64 //利息支出
+	F044N float64 //手续费及佣金支出
+	F045N float64 //退保金
+	F046N float64 //赔付支出净额
+	F047N float64 //提取保险合同准备金净额
+	F048N float64 //保单红利支出
+	F049N float64 //分保费用
+	F008N float64 //营业税金及附加
+	F009N float64 //销售费用
+	F010N float64 //管理费用
+	F011N float64 //勘探费用
+	F012N float64 //财务费用
+	F056N float64 //研发费用
+	F013N float64 //资产减值损失
+	F014N float64 //加：公允价值变动净收益
+	F015N float64 //投资收益
+	F016N float64 //其中：对联营企业和合营企业的投资收益
+	F037N float64 //汇兑收益
+	F051N float64 //其它收入
+	F057N float64 //信用减值损失
+	F058N float64 //净敞口套期收益
+	F059N float64 //资产处置收益
+	F017N float64 //影响营业利润的其他科目
+	F018N float64 //三、营业利润
+	F019N float64 //加：补贴收入
+	F020N float64 //营业外收入
+	F050N float64 //其中：非流动资产处置利得
+	F021N float64 //减：营业外支出
+	F022N float64 //其中：非流动资产处置损失
+	F023N float64 //加：影响利润总额的其他科目
+	F024N float64 //四、利润总额
+	F025N float64 //减：所得税
+	F026N float64 //加：影响净利润的其他科目
+	F027N float64 //五、净利润
+	F060N float64 //持续经营净利润
+	F061N float64 //终止经营净利润
+	F028N float64 //归属于母公司所有者的净利润
+	F029N float64 //少数股东损益
+	F031N float64 //(一）基本每股收益
+	F032N float64 //（二）稀释每股收益
+	F038N float64 //七、其他综合收益
+	F039N float64 //八、综合收益总额
+	F040N float64 //其中：归属于母公司
+	F041N float64 //其中：归属于少数股东
+	MEMO  string  //备注
+	F062N float64 //其中：利息费用
+	F063N float64 //其中：利息收入
+	F064N float64 //信用减值损失（2019格式）
+	F065N float64 //资产减值损失（2019格式）
+	F066N float64 //其中：归属母公司所有者的其他综合收益的税后净额
+	F067N float64 //其中：归属于少数股东的其他综合收益的税后净额
 }
-
-//FinanceExpense 财务费用 其中：利息费用、利息收入
-type FinanceExpense struct {
-	IE    float64 //利息费用 interest expenses
-	II    float64 //利息收入 Interest income
-	Total float64
-}
-
-func (fe *FinanceExpense) CalTotal() float64 {
-	total := fe.IE - fe.II
-	if fe.Total > 0 {
-		if total != fe.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, fe.Total)
-		}
-	} else {
-		fe.Total = total
-	}
-	return fe.Total
-}
-
-//InvestmentIncome 投资收益 损失以“-”号填列 其中：对联营企业和合营企业的投资收益 以摊余成本计量的金融资产终止确认收益（损失以“-”号填列）
-type InvestmentIncome struct {
-	IIFAJV    float64 //对联营企业和合营企业的投资收益 Investment income from associates and joint ventures
-	IFDOFAMAC float64 //以摊余成本计量的金融资产终止确认收益 Income from derecognition of financial assets measured at amortized cost
-	Total     float64
-}
-
-func (ii *InvestmentIncome) CalTotal() float64 {
-	total := ii.IIFAJV + ii.IFDOFAMAC
-	if ii.Total > 0 {
-		if total != ii.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, ii.Total)
-		}
-	} else {
-		ii.Total = total
-	}
-	return ii.Total
-}
-
-//EarningsPerShare 每股收益
-type EarningsPerShare struct {
-	Beps float64 //基本每股收益 Basic earnings per share
-	Deps float64 //稀释每股收益 Diluted earnings per share
-}
-
-func (is *IncomeSheet) Check() bool {
-	totalProfit := is.CalTotalProfit()
-	if is.TotalProfit != totalProfit {
-		glog.Error("IncomeSheet Check TotalProfit fail,year:%v", is.CTime.String())
-		return false
-	}
-
-	netProfit := is.CalNetProfit()
-	if is.NetProfit != netProfit {
-		glog.Error("IncomeSheet Check NetProfit fail,year:%v", is.CTime.String())
-		return false
-	}
-
-	total := is.CalTotal()
-	return is.Total == total
-}
-
-//CalTotalProfit 计算利润总额
-func (is *IncomeSheet) CalTotalProfit() float64 {
-	totalProfit := is.Revenue -
-		is.CostOfSales - is.TaxesAndSurcharge - is.SellingExpense - is.GAExpense - is.FinanceExpense.CalTotal() +
-		is.OtherIncome + is.InvestmentIncome.CalTotal() + is.NEHI + is.IncomeFromChangesInFairValue +
-		is.CreditImpairmentLoss + is.AssetsImpairmentLoss +
-		is.IFAD + is.OperationProfit + is.NonOperatingIncome - is.NonOperatingExpense
-	if is.TotalProfit > 0 {
-		if totalProfit != is.TotalProfit {
-			glog.Error("合计错误，计算值%v 获取值%v", totalProfit, is.TotalProfit)
-		}
-	} else {
-		is.TotalProfit = totalProfit
-	}
-
-	return is.TotalProfit
-}
-
-//CalNetProfit 计算净利润
-func (is *IncomeSheet) CalNetProfit() float64 {
-	is.NetProfit = is.TotalProfit - is.IncomeTax
-	return is.NetProfit
-}
-
-func (is *IncomeSheet) CalTotal() float64 {
-	total := is.NetProfit + is.OCI
-	if is.Total > 0 {
-		if total != is.Total {
-			glog.Error("合计错误，计算值%v 获取值%v", total, is.Total)
-		}
-	} else {
-		is.Total = total
-	}
-	return is.Total
-}
-
-//---------------数值比率分析------------------//

@@ -119,5 +119,26 @@
     http://kjs.mof.gov.cn/zt/kjzzss/kuaijizhunzeshishi/201512/t20151208_1602637.htm
     企业会计准则第42号——持有待售的非流动资产、处置组和终止经营（财会〔2017〕13号）
     http://kjs.mof.gov.cn/zt/kjzzss/kuaijizhunzeshishi/201709/t20170907_2694145.htm
+##财务报告数据获取方式
+    各上市公司官网，此方法较为分散，不建议使用
+    上海证券交所或者深圳证券交易所的官网 
+    1.上海证券交所--披露 http://www.sse.com.cn/disclosure/listedinfo/regular/
+    2.深圳证券交易所--信息披露--上市公司信息--定期报告  http://www.szse.cn/disclosure/listed/fixed/index.html
+    3.中国证券网--信息披露平台 https://xinpi.cnstock.com/
+        沪市 https://xinpi.cnstock.com/Search.aspx?Style=012001
+        深市 https://xinpi.cnstock.com/Search.aspx?Style=012002
+        中国证券网的web api感觉不太好总结，所以就先舍弃
+    本所内的各个公司的财务报表格式是一致的
+    他们的报告内容都是pdf格式的，在信息拆解的时候，需要进行pdf文件操作
+    4.中国证监会指定披露平台 巨潮资讯 http://webapi.cninfo.com.cn/#/apiDoc
     
+    ------本项目采取的方式是巨潮资讯上公开api接口，获取信息。
+    数据中心 http://webapi.cninfo.com.cn/#/dataBrowse 选财务指标
+    下面有细分项 报告期---财务指标---单季度---TTM
+    再细分 报告期---个股报告期资产负债表---个股报告期利润表---个股报告期现金表
+          财务指标---个股报告期指标表---财务指标行业排名
+            单季度---个股单季财务利润表---个股单季现金流量表---个股单季财务指标
+
+    FSMeasures结构体内容就是根据 财务指标---个股报告期指标表内容来做的
+    http://webapi.cninfo.com.cn/api/stock/p_stock2303?
 
