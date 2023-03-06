@@ -151,7 +151,7 @@ func (fs *FinanceStatement) OCNP() float64 {
 
 //CFCL 现金流量比率=经营活动现金流量/流动负债
 func (fs *FinanceStatement) CFCL() float64 {
-	return fs.CSU.Now.OCF.Total / fs.BSU.Now.LEQ.Li.Cli.Total
+	return fs.CSU.Now.OCF.Total / fs.BSU.Now.LEQ.Li.CL.Total
 }
 
 //OCICR 现金流量利息保障倍数=经营活动现金流量/利息费用

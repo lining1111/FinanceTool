@@ -11,14 +11,14 @@ import (
 
 //IncomeSheet 利润表
 type IncomeSheet struct {
-	Revenue                      float64          //营业收入
-	CostOfSales                  float64          //减：营业成本
-	TaxesAndSurcharge            float64          //减：税金及附加
-	SellingExpense               float64          //减：销售费用
-	GAExpense                    float64          //减：管理费用
-	RDExpense                    float64          //减：研发费用 R&D expenses
+	Revenue                      float64          //营业收入 Revenue
+	CostOfSales                  float64          //减：营业成本 CostOfSales
+	TaxesAndSurcharge            float64          //减：税金及附加 TaxesAndSurcharge
+	SellingExpense               float64          //减：销售费用 SellingExpense
+	GAExpense                    float64          //减：管理费用 GAExpense
+	RDExpense                    float64          //减：研发费用 RDExpense
 	FinanceExpense               FinanceExpense   //减：财务费用 其中：利息费用+利息收入
-	OtherIncome                  float64          //其他收益
+	OtherIncome                  float64          //其他收益 OtherIncome
 	InvestmentIncome             InvestmentIncome //投资收益 损失以“-”号填列 其中：对联营企业和合营企业的投资收益 以摊余成本计量的金融资产终止确认收益（损失以“-”号填列）
 	NEHI                         float64          //净敞口套期收益（损失以“-”号填列） Net exposure hedging income
 	IncomeFromChangesInFairValue float64          //公允价值变动收益 损失以“-”号填列
@@ -28,9 +28,9 @@ type IncomeSheet struct {
 	OperationProfit              float64          //营业利润 亏损以“-”号填列
 	NonOperatingIncome           float64          //加： 营业外收入
 	NonOperatingExpense          float64          //减： 营业外支出
-	TotalProfit                  float64          //利润总额
-	IncomeTax                    float64          //企业所得税
-	NetProfit                    float64          //净利润
+	TotalProfit                  float64          //利润总额 TotalProfit
+	IncomeTax                    float64          //企业所得税 IncomeTax
+	NetProfit                    float64          //净利润 NetProfit
 	OCI                          float64          //其他综合收益各项目分别扣除所得税影响后的净额 Other Comprehensive Income
 	Total                        float64
 	EPS                          EarningsPerShare //每股收益：基本每股收益+稀释每股收益
@@ -38,7 +38,7 @@ type IncomeSheet struct {
 	Unit                         float64          //人民币金额单位
 }
 
-//FinanceExpense 财务费用 其中：利息费用+利息收入
+//FinanceExpense 财务费用 其中：利息费用、利息收入
 type FinanceExpense struct {
 	IE    float64 //利息费用 interest expenses
 	II    float64 //利息收入 Interest income
@@ -46,7 +46,14 @@ type FinanceExpense struct {
 }
 
 func (fe *FinanceExpense) CalTotal() float64 {
-	fe.Total = fe.IE - fe.II
+	total := fe.IE - fe.II
+	if fe.Total > 0 {
+		if total != fe.Total {
+			glog.Error("合计错误，计算值%v 获取值%v", total, fe.Total)
+		}
+	} else {
+		fe.Total = total
+	}
 	return fe.Total
 }
 
@@ -58,7 +65,14 @@ type InvestmentIncome struct {
 }
 
 func (ii *InvestmentIncome) CalTotal() float64 {
-	ii.Total = ii.IIFAJV + ii.IFDOFAMAC
+	total := ii.IIFAJV + ii.IFDOFAMAC
+	if ii.Total > 0 {
+		if total != ii.Total {
+			glog.Error("合计错误，计算值%v 获取值%v", total, ii.Total)
+		}
+	} else {
+		ii.Total = total
+	}
 	return ii.Total
 }
 
@@ -87,11 +101,19 @@ func (is *IncomeSheet) Check() bool {
 
 //CalTotalProfit 计算利润总额
 func (is *IncomeSheet) CalTotalProfit() float64 {
-	is.TotalProfit = is.Revenue -
+	totalProfit := is.Revenue -
 		is.CostOfSales - is.TaxesAndSurcharge - is.SellingExpense - is.GAExpense - is.FinanceExpense.CalTotal() +
 		is.OtherIncome + is.InvestmentIncome.CalTotal() + is.NEHI + is.IncomeFromChangesInFairValue +
 		is.CreditImpairmentLoss + is.AssetsImpairmentLoss +
 		is.IFAD + is.OperationProfit + is.NonOperatingIncome - is.NonOperatingExpense
+	if is.TotalProfit > 0 {
+		if totalProfit != is.TotalProfit {
+			glog.Error("合计错误，计算值%v 获取值%v", totalProfit, is.TotalProfit)
+		}
+	} else {
+		is.TotalProfit = totalProfit
+	}
+
 	return is.TotalProfit
 }
 
@@ -102,7 +124,14 @@ func (is *IncomeSheet) CalNetProfit() float64 {
 }
 
 func (is *IncomeSheet) CalTotal() float64 {
-	is.Total = is.NetProfit + is.OCI
+	total := is.NetProfit + is.OCI
+	if is.Total > 0 {
+		if total != is.Total {
+			glog.Error("合计错误，计算值%v 获取值%v", total, is.Total)
+		}
+	} else {
+		is.Total = total
+	}
 	return is.Total
 }
 

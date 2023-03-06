@@ -43,7 +43,14 @@ func (cs *CashFlowSheet) Check() bool {
 }
 
 func (cs *CashFlowSheet) CalTotal() float64 {
-	cs.Total = cs.OCF.Total + cs.ICF.Total + cs.FCF.Total
+	total := cs.OCF.Total + cs.ICF.Total + cs.FCF.Total
+	if cs.Total > 0 {
+		if total != cs.Total {
+			glog.Error("合计错误，计算值%v 获取值%v", total, cs.Total)
+		}
+	} else {
+		cs.Total = total
+	}
 	return cs.Total
 }
 
@@ -69,7 +76,14 @@ func (ocf *OperatingCashFlow) Check() bool {
 }
 
 func (ocf *OperatingCashFlow) CalTotal() float64 {
-	ocf.Total = ocf.In.Subtotal - ocf.Out.Subtotal
+	total := ocf.In.Subtotal - ocf.Out.Subtotal
+	if ocf.Total > 0 {
+		if total != ocf.Total {
+			glog.Error("合计错误，计算值%v 获取值%v", total, ocf.Total)
+		}
+	} else {
+		ocf.Total = total
+	}
 	return ocf.Total
 }
 
@@ -77,7 +91,7 @@ func (ocf *OperatingCashFlow) CalTotal() float64 {
 type OCashFlowIn struct {
 	RFCL     float64 //销售商品、提供劳务收到的现金 Cash from selling commodities or offering labor
 	ROT      float64 //收到的税费返还 Return On Taxes
-	Others   float64 //收到其他与经营活动有关的现金 Other cash paid related to operating activities
+	Others   float64 //收到其他与经营活动有关的现金 Others
 	Subtotal float64 //现金流入小计
 }
 
@@ -87,7 +101,15 @@ func (ocfi *OCashFlowIn) Check() bool {
 }
 
 func (ocfi *OCashFlowIn) CalSubtotal() float64 {
-	ocfi.Subtotal = ocfi.RFCL + ocfi.ROT + ocfi.Others
+	subtotal := ocfi.RFCL + ocfi.ROT + ocfi.Others
+	if ocfi.Subtotal > 0 {
+		if subtotal != ocfi.Subtotal {
+			glog.Error("合计错误，计算值%v 获取值%v", subtotal, ocfi.Subtotal)
+		}
+	} else {
+		ocfi.Subtotal = subtotal
+	}
+
 	return ocfi.Subtotal
 }
 
@@ -95,7 +117,7 @@ func (ocfi *OCashFlowIn) CalSubtotal() float64 {
 type OCashFlowOut struct {
 	PFCL     float64 //购买商品、接受劳务支付的现金 Cash paid for commodities or labor
 	PFE      float64 //支付给职工及为职工支付的现金 Cash paid to and on behalf of employees
-	PFTax    float64 //支付的各项税费
+	PFTax    float64 //支付的各项税费 PFTax
 	Others   float64 //支付其他与经营活动有关的现金 Cash paid relating to other operating activities
 	Subtotal float64 //现金流出小计
 }
@@ -106,7 +128,14 @@ func (ocfo *OCashFlowOut) Check() bool {
 }
 
 func (ocfo *OCashFlowOut) CalSubtotal() float64 {
-	ocfo.Subtotal = ocfo.PFCL + ocfo.PFE + ocfo.PFTax + ocfo.Others
+	subtotal := ocfo.PFCL + ocfo.PFE + ocfo.PFTax + ocfo.Others
+	if ocfo.Subtotal > 0 {
+		if subtotal != ocfo.Subtotal {
+			glog.Error("合计错误，计算值%v 获取值%v", subtotal, ocfo.Subtotal)
+		}
+	} else {
+		ocfo.Subtotal = subtotal
+	}
 	return ocfo.Subtotal
 }
 
@@ -132,7 +161,14 @@ func (icf *InvestingCashFlow) Check() bool {
 }
 
 func (icf *InvestingCashFlow) CalTotal() float64 {
-	icf.Total = icf.In.Subtotal - icf.Out.Subtotal
+	total := icf.In.Subtotal - icf.Out.Subtotal
+	if icf.Total > 0 {
+		if total != icf.Total {
+			glog.Error("合计错误，计算值%v 获取值%v", total, icf.Total)
+		}
+	} else {
+		icf.Total = total
+	}
 	return icf.Total
 }
 
@@ -152,7 +188,14 @@ func (icfi *ICashFlowIn) Check() bool {
 }
 
 func (icfi *ICashFlowIn) CalSubtotal() float64 {
-	icfi.Subtotal = icfi.RFIW + icfi.RFII + icfi.RFFAIALTA + icfi.RFSSOBU + icfi.Others
+	subtotal := icfi.RFIW + icfi.RFII + icfi.RFFAIALTA + icfi.RFSSOBU + icfi.Others
+	if icfi.Subtotal > 0 {
+		if subtotal != icfi.Subtotal {
+			glog.Error("合计错误，计算值%v 获取值%v", subtotal, icfi.Subtotal)
+		}
+	} else {
+		icfi.Subtotal = subtotal
+	}
 	return icfi.Subtotal
 }
 
@@ -171,7 +214,14 @@ func (icfo *ICashFlowOut) Check() bool {
 }
 
 func (icfo *ICashFlowOut) CalSubtotal() float64 {
-	icfo.Subtotal = icfo.PFFAIALTA + icfo.PFI + icfo.PFSSOBU + icfo.Others
+	subtotal := icfo.PFFAIALTA + icfo.PFI + icfo.PFSSOBU + icfo.Others
+	if icfo.Subtotal > 0 {
+		if subtotal != icfo.Subtotal {
+			glog.Error("合计错误，计算值%v 获取值%v", subtotal, icfo.Subtotal)
+		}
+	} else {
+		icfo.Subtotal = subtotal
+	}
 	return icfo.Subtotal
 }
 
@@ -198,14 +248,21 @@ func (fcf *FinancingCashFlow) Check() bool {
 }
 
 func (fcf *FinancingCashFlow) CalTotal() float64 {
-	fcf.Total = fcf.In.Subtotal - fcf.Out.Subtotal
+	total := fcf.In.Subtotal - fcf.Out.Subtotal
+	if fcf.Total > 0 {
+		if total != fcf.Total {
+			glog.Error("合计错误，计算值%v 获取值%v", total, fcf.Total)
+		}
+	} else {
+		fcf.Total = total
+	}
 	return fcf.Total
 }
 
 //FCashFlowIn 筹资现金流入
 type FCashFlowIn struct {
 	RFI        float64 //吸收投资收到的现金 Cash received from accepting investment
-	Borrowings float64 //取得借款收到的现金
+	Borrowings float64 //取得借款收到的现金 Borrowings
 	Others     float64 //收到其他与筹资活动有关的现金 Other cash received related to financing activities
 	Subtotal   float64 //现金流入小计
 }
@@ -216,24 +273,38 @@ func (fcfi *FCashFlowIn) Check() bool {
 }
 
 func (fcfi *FCashFlowIn) CalSubtotal() float64 {
-	fcfi.Subtotal = fcfi.RFI + fcfi.Borrowings + fcfi.Others
+	subtotal := fcfi.RFI + fcfi.Borrowings + fcfi.Others
+	if fcfi.Subtotal > 0 {
+		if subtotal != fcfi.Subtotal {
+			glog.Error("合计错误，计算值%v 获取值%v", subtotal, fcfi.Subtotal)
+		}
+	} else {
+		fcfi.Subtotal = subtotal
+	}
 	return fcfi.Subtotal
 }
 
 //FCashFlowOut 筹资现金流出
 type FCashFlowOut struct {
-	PFDebt   float64 //偿还债务支付的现金
+	PFDebt   float64 //偿还债务支付的现金 PFDebt
 	PFDPI    float64 //分配股利、利润或偿付利息支付的现金 Cash paid for dividend ， profit or interest
 	Others   float64 //支付其他与筹资活动有关的现金 Other cash paid related to financing activities
 	Subtotal float64 //现金流出小计
 }
 
-func (fcof FCashFlowOut) Check() bool {
-	total := fcof.CalSubtotal()
-	return fcof.Subtotal == total
+func (fcfo *FCashFlowOut) Check() bool {
+	total := fcfo.CalSubtotal()
+	return fcfo.Subtotal == total
 }
 
-func (fcof *FCashFlowOut) CalSubtotal() float64 {
-	fcof.Subtotal = fcof.PFDebt + fcof.PFDPI + fcof.Others
-	return fcof.Subtotal
+func (fcfo *FCashFlowOut) CalSubtotal() float64 {
+	subtotal := fcfo.PFDebt + fcfo.PFDPI + fcfo.Others
+	if fcfo.Subtotal > 0 {
+		if subtotal != fcfo.Subtotal {
+			glog.Error("合计错误，计算值%v 获取值%v", subtotal, fcfo.Subtotal)
+		}
+	} else {
+		fcfo.Subtotal = subtotal
+	}
+	return fcfo.Subtotal
 }

@@ -65,41 +65,37 @@
     
     第十一条  金融企业可以根据行业特点和现金流量实际情况，合理确定经营活动现金流量项目的类别。
 #####现金流入
-    CFSCOL Cash from selling commodities or offering labor销售商品、提供劳务收到的现金
-    ROT Return On Taxes收到的税费返还
-    OCPRTOA Other cash paid related to operating activities收到其他与经营活动有关的现金
-    CashInflowSubtotal 现金流入小计
+    销售商品、提供劳务收到的现金 Cash from selling commodities or offering labor
+    收到的税费返还 Return On Taxes
+    收到其他与经营活动有关的现金 Others
 #####现金流出
-    CPFCOL Cash paid for commodities or labor购买商品、接受劳务支付的现金
-    CPAOBOE Cash paid to and on behalf of employees支付给职工及为职工支付的现金
-    TaxPayments 支付的各项税费
-    CPRTOOA Cash paid relating to other operating activities支付其他与经营活动有关的现金
-    CashOutflowSubtotal 现金流出小计
+    购买商品、接受劳务支付的现金 Cash paid for commodities or labor
+    支付给职工及为职工支付的现金 Cash paid to and on behalf of employees
+    支付的各项税费 PFTax
+    支付其他与经营活动有关的现金 Cash paid relating to other operating activities
 ####InvestingCashFlow 投资活动现金流量
     第十二条  投资活动，是指企业长期资产的购建和不包括在现金等价物范围的投资及其处置活动。
 #####现金流入
-    CFIW Cash from investment withdrawal收回投资收到的现金
-    CFII Cash from investment income取得投资收益收到的现金
-    NCFDFAIAOLTA Net cash from disposing fixed assets， intangible assets and other long-term assets 处置固定资产、无形资产和其他长期资产收回的现金净额
-    NCRFDOSAOBU Net cash received from disposal of subsidiaries and other business units处置子公司及其他营业单位收到的现金净额
-    OCRRTIA Other cash received related to investing activities收到其他与投资活动有关的现金
-    CashInflowSubtotal 现金流入小计
+    收回投资收到的现金 Cash from investment withdrawal
+    取得投资收益收到的现金 Cash from investment income
+    处置固定资产、无形资产和其他长期资产收回的现金净额 Net cash from disposing fixed assets， intangible assets and other long-term assets
+    处置子公司及其他营业单位收到的现金净额 Net cash received from disposal of subsidiaries and other business units
+    收到其他与投资活动有关的现金 Other cash received related to investing activities
 #####现金流出
-    CAFBFAIAOLTA Cash paid for buying fixed assets， intangible assets and other long-term investment购建固定资产、无形资产和其他长期资产支付的现金
-    CPFI Cash paid for investment投资支付的现金
-    NCOFOPSAOBU net cash outflows of procurement of subsidiaries and other business units取得子公司及其他营业单位支付的现金净额
-    OCPRTIA Other cash paid related to investing activities支付其他与投资活动有关的现金
-    CashOutflowSubtotal 现金流出小计
+    购建固定资产、无形资产和其他长期资产支付的现金 Cash paid for buying fixed assets， intangible assets and other long-term investment
+    投资支付的现金 Cash paid for investment
+    取得子公司及其他营业单位支付的现金净额 net cash outflows of procurement of subsidiaries and other business units
+    支付其他与投资活动有关的现金 Other cash paid related to investing activities
 ####FinancingCashFlow 筹资活动现金流量
     第十四条  筹资活动，是指导致企业资本及债务规模和构成发生变化的活动。
 
 #####现金流入
-    CRFAI Cash received from accepting investment吸收投资收到的现金
-    Borrowings 取得借款收到的现金
-    OCRRTFA Other cash received related to financing activities收到其他与筹资活动有关的现金
-    CashInflowSubtotal 现金流入小计
+    吸收投资收到的现金 Cash received from accepting investment
+    取得借款收到的现金 Borrowings
+    收到其他与筹资活动有关的现金 Other cash received related to financing activities
 #####现金流出
-    CashPaidForDebt 偿还债务支付的现金
-    CPFDPI Cash paid for dividend ， profit or interest分配股利、利润或偿付利息支付的现金
-    OCPRTFA Other cash paid related to financing activities支付其他与筹资活动有关的现金
-    CashOutflowSubtotal 现金流出小计
+    偿还债务支付的现金 PFDebt
+    分配股利、利润或偿付利息支付的现金 Cash paid for dividend ， profit or interest
+    支付其他与筹资活动有关的现金 Other cash paid related to financing activities
+
+    企业实际收到的政府补助，无论是与资产相关还是与收益相关，均在“收到其他与经营活动有关的现金”项目填列。
