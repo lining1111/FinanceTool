@@ -2,6 +2,7 @@ package cninfo
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"github.com/golang/glog"
@@ -89,6 +90,8 @@ var (
 func Getrdate(year string, q string) string {
 	return year + q
 }
+
+var Mcode = "" //这个是后台验证的，是时间戳的base64
 
 func Get(url string, params map[string]string, headers map[string]string) (*http.Response, error) {
 	//new request
@@ -186,7 +189,9 @@ func Post(url string, body interface{}, params map[string]string, headers map[st
 	req.Header.Add("Host", "webapi.cninfo.com.cn")
 	req.Header.Add("Origin", "http://webapi.cninfo.com.cn")
 	req.Header.Add("Referer", "http://webapi.cninfo.com.cn/")
-	req.Header.Add("mcode", "MTY3ODE4NDE0NA==")
+	timestampBase64 := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(int(seconds))))
+
+	req.Header.Add("mcode", timestampBase64)
 
 	//add headers
 	if headers != nil {
