@@ -1,5 +1,15 @@
 package FinancialStatement
 
+import (
+	"FinanceTool/FinancialStatement/cninfo"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/goinggo/mapstructure"
+	"github.com/golang/glog"
+	"io/ioutil"
+)
+
 /**
 url http://webapi.cninfo.com.cn/api/stock/p_stock2303?
 
@@ -137,102 +147,51 @@ type FSMeasures struct {
 	F129N     float64 //归属于母公司所有者权益
 }
 
-//ITR 存货周转率=产品销售成本/((初期存货+期末存货)/2)
-func (fs *FinanceStatement) ITR() float64 {
-	return fs.ISU.Now.SellingExpense / ((fs.BSU.Last.A.CA.INV + fs.BSU.Now.A.CA.INV) / 2)
+func (fsm *FSMeasures) GetFromCNINFByScode(scode string, year string, q string) (bool, error) {
+	url := "http://webapi.cninfo.com.cn/api/stock/p_stock2303"
+	params := map[string]string{
+		"scode": scode,
+		"rdate": cninfo.Getrdate(year, q),
+		"type":  "071001",
+	}
+	resp, err := cninfo.Post(url, nil, params, nil)
+	defer resp.Body.Close()
+	if err != nil {
+		return false, err
+	} else {
+		body, err1 := ioutil.ReadAll(resp.Body)
+		if err1 != nil {
+			return false, err1
+		} else {
+			//打印结果
+			//fmt.Println(string(body))
+			var result map[string]interface{}
+			err2 := json.Unmarshal(body, &result)
+			if err2 != nil {
+				return false, err2
+			} else {
+				if result["resultmsg"].(string) != "success" {
+					glog.Error("result:%s", string(body))
+					return false, errors.New("http req err")
+				}
+				//打印下数组数量
+				fmt.Println("回复结果数为 ", result["total"])
+				//fmt.Println(result["records"].([]interface{})[0])
+				//反序列化
+				err3 := mapstructure.Decode(result["records"].([]interface{})[0], fsm)
+				if err3 != nil {
+					return false, err2
+				}
+			}
+		}
+	}
+	return true, nil
 }
 
-//ITD 存货周转天数=360/存货周转率=(360(初期存货+期末存货)/2)/产品销售成本
-func (fs *FinanceStatement) ITD() float64 {
-	return 360 / fs.ITR()
-}
-
-//ARTR 应收账款周转率=销售收入/(期初应收账款+期末应收账款)/2 标准值 3
-func (fs *FinanceStatement) ARTR() float64 {
-	return fs.ISU.Now.Revenue / ((fs.BSU.Last.A.CA.AR + fs.BSU.Now.A.CA.AR) / 2)
-}
-
-//ARTD 应收账款周转天数=360/应收账款周转率 标准值 100
-func (fs *FinanceStatement) ARTD() float64 {
-	return 360 / fs.ARTR()
-}
-
-//CAR 流动资产周转率=销售收入/((期初流动资产+期末流动资产)/2) 标准值 1
-func (fs FinanceStatement) CAR() float64 {
-	return fs.ISU.Now.Revenue / ((fs.BSU.Last.A.CA.Total + fs.BSU.Now.A.CA.Total) / 2)
-}
-
-//CAD 流动资产周转天数=360/(销售收入/((期初流动资产+期末流动资产)/2))
-func (fs *FinanceStatement) CAD() float64 {
-	return 360 / fs.CAR()
-}
-
-//NWCR 净营运资本周转率=销售收入/净营运资本
-func (fs *FinanceStatement) NWCR() float64 {
-	return fs.ISU.Now.Revenue / fs.BSU.Now.NWC()
-}
-
-//NWCD 净营运资本周转天数=360/(销售收入/净营运资本)
-func (fs *FinanceStatement) NWCD() float64 {
-	return 360 / fs.NWCR()
-}
-
-//NCAR 非流动资产周转率=销售收入/非流动资产
-func (fs *FinanceStatement) NCAR() float64 {
-	return fs.ISU.Now.Revenue / fs.BSU.Now.A.NCA.Total
-}
-
-//NCAD 非流动资产周转天数=360/(销售收入/非流动资产)
-func (fs *FinanceStatement) NCAD() float64 {
-	return 360 / fs.NCAR()
-}
-
-//TAR 总资产周转率=销售收入/((期初资产总额+期末资产总额)/2) 标准值 0.8
-func (fs *FinanceStatement) TAR() float64 {
-	return fs.ISU.Now.Revenue / ((fs.BSU.Last.A.Total + fs.BSU.Now.A.Total) / 2)
-}
-
-//TAD 总资产周转天数=360/(销售收入/((期初资产总额+期末资产总额)/2))
-func (fs *FinanceStatement) TAD() float64 {
-	return 360 / fs.TAR()
-}
-
-//OC 7.营业周期=存货周转天数+应收账款周转天数 标准值 200
-func (fs *FinanceStatement) OC() float64 {
-	return fs.ITD() + fs.ARTD()
-}
-
-//ROA 资产净利率=净利润/((期初资产总额+期末资产总额)/2) 无标准值
-func (fs *FinanceStatement) ROA() float64 {
-	return fs.ISU.Now.NetProfit / ((fs.BSU.Last.A.Total + fs.BSU.Now.A.Total) / 2)
-}
-
-//ROE 净资产收益率=净利润/((期初所有者权益合计+期末所有者权益合计)/2)
-func (fs *FinanceStatement) ROE() float64 {
-	return fs.ISU.Now.NetProfit / ((fs.BSU.Last.LEQ.Eq.Total + fs.BSU.Now.LEQ.Eq.Total) / 2)
-}
-
-//OCA 全部资产现金回收率=经营活动现金净流量/平均资产总额
-func (fs *FinanceStatement) OCA() float64 {
-	return fs.CSU.Now.OCF.Total / ((fs.BSU.Last.A.Total + fs.BSU.Now.A.Total) / 2)
-}
-
-//OCNP 盈利现金比率=经营现金净流量/净利润
-func (fs *FinanceStatement) OCNP() float64 {
-	return fs.CSU.Now.OCF.Total / fs.ISU.Now.NetProfit
-}
-
-//CFCL 现金流量比率=经营活动现金流量/流动负债
-func (fs *FinanceStatement) CFCL() float64 {
-	return fs.CSU.Now.OCF.Total / fs.BSU.Now.LEQ.Li.CL.Total
-}
-
-//OCICR 现金流量利息保障倍数=经营活动现金流量/利息费用
-func (fs *FinanceStatement) OCICR() float64 {
-	return fs.CSU.Now.OCF.Total / fs.ISU.Now.FinanceExpense.IE
-}
-
-//OCLI 经营现金流量债务比=经营活动现金流量/债务总额
-func (fs *FinanceStatement) OCLI() float64 {
-	return fs.CSU.Now.OCF.Total / fs.BSU.Now.LEQ.Li.Total
+func GetFromCNINFByScode_test() {
+	fsm := new(FSMeasures)
+	_, err := fsm.GetFromCNINFByScode("000001", "2021", cninfo.Q1)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
