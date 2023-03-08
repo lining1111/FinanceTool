@@ -34,7 +34,7 @@ var localToken LocalTokenInfo
 var usToken = false
 
 func init() {
-	if !usToken {
+	if usToken {
 
 		//判断token是否为空，空的话获取一次
 		localToken.mtx.Lock()
@@ -108,6 +108,24 @@ func Get(url string, params map[string]string, headers map[string]string) (*http
 		}
 		req.URL.RawQuery = q.Encode()
 	}
+	seconds := time.Now().Unix()
+
+	req.AddCookie(&http.Cookie{
+		Name:  "Hm_lvt_489bd07e99fbfc5f12cbb4145adb0a9b",
+		Value: strconv.Itoa(int(seconds)),
+	})
+
+	req.AddCookie(&http.Cookie{
+		Name:  "Hm_lpvt_489bd07e99fbfc5f12cbb4145adb0a9b",
+		Value: strconv.Itoa(int(seconds + 60)),
+	})
+	req.Header.Add("Host", "webapi.cninfo.com.cn")
+	req.Header.Add("Origin", "http://webapi.cninfo.com.cn")
+	req.Header.Add("Referer", "http://webapi.cninfo.com.cn/")
+	timestampBase64 := base64.StdEncoding.EncodeToString([]byte(strconv.Itoa(int(seconds))))
+
+	req.Header.Add("mcode", timestampBase64)
+
 	//add headers
 	if headers != nil {
 		for key, val := range headers {
@@ -125,15 +143,6 @@ func Get(url string, params map[string]string, headers map[string]string) (*http
 	}
 	req.URL.RawQuery = q.Encode()
 
-	req.AddCookie(&http.Cookie{
-		Name:  "Hm_lvt_489bd07e99fbfc5f12cbb4145adb0a9b",
-		Value: "1678183494",
-	})
-
-	req.AddCookie(&http.Cookie{
-		Name:  "Hm_lpvt_489bd07e99fbfc5f12cbb4145adb0a9b",
-		Value: "1678183661",
-	})
 	//http client
 	client := &http.Client{}
 	glog.Info("Go ", http.MethodPost, " URL:", req.URL.String())

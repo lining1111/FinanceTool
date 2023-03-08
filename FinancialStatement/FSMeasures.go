@@ -8,6 +8,7 @@ import (
 	"github.com/goinggo/mapstructure"
 	"github.com/golang/glog"
 	"io/ioutil"
+	"net/http"
 )
 
 /**
@@ -170,9 +171,9 @@ func (fsm *FSMeasures) GetFromCNINFByScode(scode string, year string, q string) 
 			if err2 != nil {
 				return false, err2
 			} else {
-				if result["resultmsg"].(string) != "success" {
+				if result["resultcode"].(float64) != http.StatusOK {
 					glog.Error("result:%s", string(body))
-					return false, errors.New("http req err")
+					return false, errors.New("http req err:" + string(body))
 				}
 				//打印下数组数量
 				fmt.Println("回复结果数为 ", result["total"])
