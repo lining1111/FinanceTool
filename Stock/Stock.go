@@ -1,12 +1,7 @@
 package Stock
 
 import (
-	"FinanceTool/Stock/AuditOpinion"
-	"FinanceTool/Stock/BalanceSheet"
-	"FinanceTool/Stock/CashFlowSheet"
-	"FinanceTool/Stock/FinancialRatios"
-	"FinanceTool/Stock/IMR"
-	"FinanceTool/Stock/IncomeSheet"
+	HSB "FinanceTool/Stock/HSB"
 )
 
 /**
@@ -35,11 +30,11 @@ type FSL1 struct {
 
 //FSL2 本公司当季度报表集合
 type FSL2 struct {
-	RepublicDate string                          //发布日期
-	BS           BalanceSheet.BalanceSheet       //资产负债表
-	IS           IncomeSheet.IncomeSheet         //利润表
-	CS           CashFlowSheet.CashFlowSheet     //现金流量表
-	FR           FinancialRatios.FinancialRatios //指标表
-	IMR          IMR.IMR                         //指标行业排名
-	AO           AuditOpinion.AuditOpinion       //审计意见
+	RepublicDate string              //发布日期
+	BS           HSB.BalanceSheet    //资产负债表
+	IS           HSB.IncomeSheet     //利润表
+	CS           HSB.CashFlowSheet   //现金流量表
+	FR           HSB.FinancialRatios //指标表
+	IMR          HSB.IMR             //指标行业排名
+	AO           HSB.AuditOpinion    //审计意见
 }

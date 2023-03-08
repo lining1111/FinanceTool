@@ -1,19 +1,12 @@
-package BalanceSheet
+package BSE
 
-import (
-	"FinanceTool/COM/cninfo"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"github.com/goinggo/mapstructure"
-	"github.com/golang/glog"
-	"io/ioutil"
-	"net/http"
-)
+const apiBS = "http://webapi.cninfo.com.cn/api/stock/p_stock2300_BSE"
 
-const urlApi = "http://webapi.cninfo.com.cn/api/stock/p_stock2300"
-
-//BalanceSheet 资产负债表 "http://webapi.cninfo.com.cn/api/stock/p_stock2300"
+//BalanceSheet 资产负债表 "http://webapi.cninfo.com.cn/api/stock/p_stock2300_BSE"
+//params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.
+//			sdate	开始查询报告期	string
+//			edate	结束查询报告期	string
+//			type	合并类型	string	通过p_public0006可获取，对应的总类编码为‘071’
 type BalanceSheet struct {
 	SECNAME     string //证券简称
 	SECCODE     string //证券代码
@@ -148,62 +141,4 @@ type BalanceSheet struct {
 	F120N float64 //应收款项融资 2019年8月新增
 	F121N float64 //使用权资产 2019年8月新增
 	F122N float64 //租赁负债	2019年8月新增
-}
-
-/**
-资产负债表格式化处理，包括但不限于 xls html 数据库
-这里数据库选项选择 sqlite3
-*/
-
-//GetFromCNINFByScode 从巨潮资讯平台以股票代码和日期为输入获取
-func (bs *BalanceSheet) GetFromCNINFByScode(scode string, year string, q string) (bool, error) {
-	url := urlApi
-	params := map[string]string{
-		"scode": scode,
-		"rdate": cninfo.Getrdate(year, q),
-		"type":  "071001",
-	}
-	resp, err := cninfo.Post(url, nil, params, nil)
-	defer resp.Body.Close()
-	if err != nil {
-		return false, err
-	} else {
-		body, err1 := ioutil.ReadAll(resp.Body)
-		if err1 != nil {
-			return false, err1
-		} else {
-			//打印结果
-			//fmt.Println(string(body))
-			var result map[string]interface{}
-			err2 := json.Unmarshal(body, &result)
-			if err2 != nil {
-				return false, err2
-			} else {
-				if result["resultcode"].(float64) != http.StatusOK {
-					glog.Error("result:%s", string(body))
-					return false, errors.New("http req err:" + string(body))
-				}
-
-				//打印下数组数量
-				fmt.Println("回复结果数为 ", result["total"])
-				if result["total"].(float64) == 0 {
-					return false, errors.New("http result total 0")
-				}
-				//反序列化
-				err3 := mapstructure.Decode(result["records"].([]interface{})[0], bs)
-				if err3 != nil {
-					return false, err2
-				}
-			}
-		}
-	}
-	return true, nil
-}
-
-func GetFromCNINFByScode_test() {
-	bs := new(BalanceSheet)
-	_, err := bs.GetFromCNINFByScode("000001", "2021", cninfo.Q1)
-	if err != nil {
-		fmt.Println(err)
-	}
 }

@@ -1,19 +1,16 @@
-package FinancialRatios
+package HSB
 
 import (
 	"FinanceTool/COM/cninfo"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/goinggo/mapstructure"
-	"github.com/golang/glog"
-	"io/ioutil"
-	"net/http"
 )
 
-const urlApi = "http://webapi.cninfo.com.cn/api/stock/p_stock2303"
+const apiFR = "http://webapi.cninfo.com.cn/api/stock/p_stock2303"
 
 //FinancialRatios 财务指标 "http://webapi.cninfo.com.cn/api/stock/p_stock2303"
+//params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.
+//			rdate	报告期	string	报告期 可为空，为空取所有报告期
+//			type	合并类型	string	通过p_public0006可获取，对应的总类编码为‘071’
 type FinancialRatios struct {
 	ORGNAME   string //机构名称
 	SECCODE   string //证券代码
@@ -148,52 +145,17 @@ type FinancialRatios struct {
 	F129N float64 //归属于母公司所有者权益
 }
 
-func (fr *FinancialRatios) GetFromCNINFByScode(scode string, year string, q string) (bool, error) {
-	url := urlApi
+func FRGetFromCNINFByScode_test() {
+	fr := make([]FinancialRatios, 1, 20000)
+	url := apiFR
 	params := map[string]string{
-		"scode": scode,
-		"rdate": cninfo.Getrdate(year, q),
+		"scode": "000001",
+		"sdate": cninfo.Getrdate("2021", cninfo.Q1),
+		"edate": cninfo.Getrdate("2021", cninfo.Q1),
 		"type":  "071001",
 	}
-	resp, err := cninfo.Post(url, nil, params, nil)
-	defer resp.Body.Close()
-	if err != nil {
-		return false, err
-	} else {
-		body, err1 := ioutil.ReadAll(resp.Body)
-		if err1 != nil {
-			return false, err1
-		} else {
-			//打印结果
-			//fmt.Println(string(body))
-			var result map[string]interface{}
-			err2 := json.Unmarshal(body, &result)
-			if err2 != nil {
-				return false, err2
-			} else {
-				if result["resultcode"].(float64) != http.StatusOK {
-					glog.Error("result:%s", string(body))
-					return false, errors.New("http req err:" + string(body))
-				}
-				//打印下数组数量
-				fmt.Println("回复结果数为 ", result["total"])
-				if result["total"].(float64) == 0 {
-					return false, errors.New("http result total 0")
-				}
-				//反序列化
-				err3 := mapstructure.Decode(result["records"].([]interface{})[0], fr)
-				if err3 != nil {
-					return false, err2
-				}
-			}
-		}
-	}
-	return true, nil
-}
 
-func GetFromCNINFByScode_test() {
-	fr := new(FinancialRatios)
-	_, err := fr.GetFromCNINFByScode("000001", "2021", cninfo.Q1)
+	err := cninfo.GetInfoByScodeDate(url, params, &fr)
 	if err != nil {
 		fmt.Println(err)
 	}

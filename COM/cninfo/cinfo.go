@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/goinggo/mapstructure"
 	"github.com/golang/glog"
 	"io/ioutil"
 	"log"
@@ -276,4 +278,45 @@ func GetToken() (TokenInfo, error) {
 		}
 
 	}
+}
+
+func GetInfoByScodeDate(url string, params map[string]string, info interface{}) error {
+	if len(url) == 0 {
+		return errors.New("url empty")
+	}
+	resp, err := Post(url, nil, params, nil)
+	defer resp.Body.Close()
+	if err != nil {
+		return err
+	} else {
+		body, err1 := ioutil.ReadAll(resp.Body)
+		if err1 != nil {
+			return err1
+		} else {
+			//打印结果
+			//fmt.Println(string(body))
+			var result map[string]interface{}
+			err2 := json.Unmarshal(body, &result)
+			if err2 != nil {
+				return err2
+			} else {
+				if result["resultcode"].(float64) != http.StatusOK {
+					glog.Error("result:%s", string(body))
+					return errors.New("http req err:" + string(body))
+				}
+
+				//打印下数组数量
+				fmt.Println("回复结果数为 ", result["total"])
+				if result["total"].(float64) == 0 {
+					return errors.New("http result total 0")
+				}
+				//反序列化
+				err3 := mapstructure.Decode(result["records"], info)
+				if err3 != nil {
+					return err3
+				}
+			}
+		}
+	}
+	return nil
 }

@@ -24,16 +24,45 @@
         --cninfo 巨潮资讯数据访问接口
     按 债券、股票、基金 分类处理
     -Bond 债券
-        ...待续
+        --BaseInfo 基本信息
+        --Market 市场信息
+
     -Stock 股票
-        --BalanceSheet 资产负债表
-        --IncomeSheet 利润表
-        --CashFlowSheet 现金流量表
-        --FinanicalRatios 财务指标
-        --AuditOpinion 审计意见
-        --IMR 行业指标排名
+        --HSB 沪深北
+            ---BalanceSheet 资产负债表
+            ---IncomeSheet 利润表
+            ---CashFlowSheet 现金流量表
+            ---FinanicalRatios 财务指标
+            ---AuditOpinion 审计意见
+            ---IMR 行业指标排名
+            ---Market 股票相关信息
+        --XSB 新三板
+            ---BalanceSheet 资产负债表
+            ---IncomeSheet 利润表
+            ---CashFlowSheet 现金流量表
+            ---FinanicalRatios 财务指标
+            ---AuditOpinion 审计意见
+            ---Market 股票相关信息
+        --HK 港股
+            ---BalanceSheet 资产负债表
+            ---BalanceSheetBank 资产负债表银行
+            ---IncomeSheet 利润表
+            ---IncomeSheetBank 利润表银行
+            ---CashFlowSheet 现金流量表
+            ---FinanicalRatios 财务指标
+            ---Market 股票相关信息
+        --BSE 北交所
+            ---BalanceSheet 资产负债表
+            ---IncomeSheet 利润表
+            ---CashFlowSheet 现金流量表
+            ---FinanicalRatios 财务指标
+            ---AuditOpinion 审计意见
+            ---IMR 行业指标排名
+            ---Market 股票相关信息
     -Fund 基金
-        ...待续
+        --BalanceSheet 基金资产负债表2009版
+        --Benchmark 基金经营业绩及收益分配表2009版
+        --FinancialRatios 基金主要财务指标2009版
 
 ##企业会计准则具体细节
     企业会计准则

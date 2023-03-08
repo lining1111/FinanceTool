@@ -1,17 +1,11 @@
-package IMR
+package HSB
 
 import (
 	"FinanceTool/COM/cninfo"
-	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/goinggo/mapstructure"
-	"github.com/golang/glog"
-	"io/ioutil"
-	"net/http"
 )
 
-const urlApi = "http://webapi.cninfo.com.cn/api/stock/p_stock2501"
+const apiIMR = "http://webapi.cninfo.com.cn/api/stock/p_stock2501"
 
 //IMR 行业排名 "http://webapi.cninfo.com.cn/api/stock/p_stock2501"
 type IMR struct {
@@ -58,54 +52,17 @@ type IMR struct {
 	F036N float64 //行业排名
 }
 
-//GetFromCNINFByScode 从巨潮资讯平台以股票代码和日期为输入获取
-func (imr *IMR) GetFromCNINFByScode(scode string, year string, q string) (bool, error) {
-	url := urlApi
+func IMRGetFromCNINFByScode_test() {
+	imr := make([]IMR, 1, 20000)
+	url := apiIMR
 	params := map[string]string{
-		"scode": scode,
-		"rdate": cninfo.Getrdate(year, q),
+		"scode": "000001",
+		"sdate": cninfo.Getrdate("2021", cninfo.Q1),
+		"edate": cninfo.Getrdate("2021", cninfo.Q1),
 		"type":  "071001",
 	}
-	resp, err := cninfo.Post(url, nil, params, nil)
-	defer resp.Body.Close()
-	if err != nil {
-		return false, err
-	} else {
-		body, err1 := ioutil.ReadAll(resp.Body)
-		if err1 != nil {
-			return false, err1
-		} else {
-			//打印结果
-			//fmt.Println(string(body))
-			var result map[string]interface{}
-			err2 := json.Unmarshal(body, &result)
-			if err2 != nil {
-				return false, err2
-			} else {
-				if result["resultcode"].(float64) != http.StatusOK {
-					glog.Error("result:%s", string(body))
-					return false, errors.New("http req err:" + string(body))
-				}
 
-				//打印下数组数量
-				fmt.Println("回复结果数为 ", result["total"])
-				if result["total"].(float64) == 0 {
-					return false, errors.New("http result total 0")
-				}
-				//反序列化
-				err3 := mapstructure.Decode(result["records"].([]interface{})[0], imr)
-				if err3 != nil {
-					return false, err2
-				}
-			}
-		}
-	}
-	return true, nil
-}
-
-func GetFromCNINFByScode_test() {
-	imr := new(IMR)
-	_, err := imr.GetFromCNINFByScode("000001", "2021", cninfo.Q1)
+	err := cninfo.GetInfoByScodeDate(url, params, &imr)
 	if err != nil {
 		fmt.Println(err)
 	}
