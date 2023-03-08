@@ -20,15 +20,20 @@
     基本每个文件夹都会分为文本部分和程序部分：
     文本部分负责将书本知识转化到本地易读易懂话语，人类阅读
     程序部分负责将数据和课本数据进行展示和对比等操作，完成信息总结类作用，机器阅读，其实也是通过机器完成数据分析，再供人类使用
-    FinancialStatement  财务报表三张表
-        BalanceSheet 资产负债表
-        IncomeSheet 利润表
-        CashFlowSheet 现金流量表
-    FinancialStatement/FSConcreteDetails 财务报表三张表内根据各行各业具体分类的细节
-##20230303
-    代码及文档内容说明：代码中三张表各自存有：内部的元素、表内指标及表历史指标
-            FinancialStatement目录内为三表的集合内容、全部的财务指标、三表间元素相互计算才能得出的指标
-    
+    -COM 通信及文件、数据库操作接口
+        --cninfo 巨潮资讯数据访问接口
+    按 债券、股票、基金 分类处理
+    -Bond 债券
+        ...待续
+    -Stock 股票
+        --BalanceSheet 资产负债表
+        --IncomeSheet 利润表
+        --CashFlowSheet 现金流量表
+        --FinanicalRatios 财务指标
+        --AuditOpinion 审计意见
+        --IMR 行业指标排名
+    -Fund 基金
+        ...待续
 
 ##企业会计准则具体细节
     企业会计准则

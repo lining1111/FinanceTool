@@ -1,47 +1,57 @@
 package BalanceSheet
 
-/**
-资产负债表，数据类计算
-*/
+import (
+	"FinanceTool/COM/cninfo"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/goinggo/mapstructure"
+	"github.com/golang/glog"
+	"io/ioutil"
+	"net/http"
+)
 
-//BalanceSheet 资产负债表 内有恒等式(Assets==LiabilityAndShareHoldersEquity)即资产合计一定等于负债及股东权益合计
+const urlApi = "http://webapi.cninfo.com.cn/api/stock/p_stock2300"
+
+//BalanceSheet 资产负债表 "http://webapi.cninfo.com.cn/api/stock/p_stock2300"
 type BalanceSheet struct {
-	SECNAME     string  //证券简称
-	SECCODE     string  //证券代码
-	ORGNAME     string  //机构名称
-	DECLAREDATE string  //公告日期
-	ENDDATE     string  //截止日期
-	F001D       string  //报告年度
-	F002V       string  //合并类型编码
-	F003V       string  //合并类型
-	F004V       string  //报表来源编码
-	F005V       string  //报表来源
-	F006N       float64 //货币资金
-	F077N       float64 //结算备付金
-	F078N       float64 //拆出资金
-	F007N       float64 //以公允价值计量且其变动计入当期损益的金融资产(20190322弃用)
-	F080N       float64 //衍生金融资产
-	F008N       float64 //应收票据
-	F009N       float64 //应收账款
-	F010N       float64 //预付款项
-	F081N       float64 //应收保费
-	F082N       float64 //应收分保账款
-	F083N       float64 //应收分保合同准备金
-	F013N       float64 //其中：应收利息
-	F014N       float64 //其中：应收股利
-	F011N       float64 //其他应收款
-	F012N       float64 //应收关联公司款
-	F084N       float64 //买入返售金融资产
-	F015N       float64 //存货
-	F016N       float64 //其中：消耗性生物资产
-	F085N       float64 //划分为持有待售的资产
-	F079N       float64 //发放贷款及垫款-流动资产
-	F017N       float64 //一年内到期的非流动资产
-	F117N       float64 //交易性金融资产
-	F118N       float64 //应收票据及应收账款
-	F119N       float64 //合同资产
-	F018N       float64 //其他流动资产
-	F019N       float64 //流动资产合计
+	SECNAME     string //证券简称
+	SECCODE     string //证券代码
+	ORGNAME     string //机构名称
+	DECLAREDATE string //公告日期
+	ENDDATE     string //截止日期
+	F001D       string //报告年度
+	F002V       string //合并类型编码
+	F003V       string //合并类型
+	F004V       string //报表来源编码
+	F005V       string //报表来源
+
+	F006N float64 //货币资金
+	F077N float64 //结算备付金
+	F078N float64 //拆出资金
+	F007N float64 //以公允价值计量且其变动计入当期损益的金融资产(20190322弃用)
+	F080N float64 //衍生金融资产
+	F008N float64 //应收票据
+	F009N float64 //应收账款
+	F010N float64 //预付款项
+	F081N float64 //应收保费
+	F082N float64 //应收分保账款
+	F083N float64 //应收分保合同准备金
+	F013N float64 //其中：应收利息
+	F014N float64 //其中：应收股利
+	F011N float64 //其他应收款
+	F012N float64 //应收关联公司款
+	F084N float64 //买入返售金融资产
+	F015N float64 //存货
+	F016N float64 //其中：消耗性生物资产
+	F085N float64 //划分为持有待售的资产
+	F079N float64 //发放贷款及垫款-流动资产
+	F017N float64 //一年内到期的非流动资产
+	F117N float64 //交易性金融资产
+	F118N float64 //应收票据及应收账款
+	F119N float64 //合同资产
+	F018N float64 //其他流动资产
+	F019N float64 //流动资产合计
 
 	F086N float64 //发放贷款及垫款-非流动资产
 	F020N float64 //可供出售金融资产
@@ -138,5 +148,62 @@ type BalanceSheet struct {
 	F120N float64 //应收款项融资 2019年8月新增
 	F121N float64 //使用权资产 2019年8月新增
 	F122N float64 //租赁负债	2019年8月新增
+}
 
+/**
+资产负债表格式化处理，包括但不限于 xls html 数据库
+这里数据库选项选择 sqlite3
+*/
+
+//GetFromCNINFByScode 从巨潮资讯平台以股票代码和日期为输入获取
+func (bs *BalanceSheet) GetFromCNINFByScode(scode string, year string, q string) (bool, error) {
+	url := urlApi
+	params := map[string]string{
+		"scode": scode,
+		"rdate": cninfo.Getrdate(year, q),
+		"type":  "071001",
+	}
+	resp, err := cninfo.Post(url, nil, params, nil)
+	defer resp.Body.Close()
+	if err != nil {
+		return false, err
+	} else {
+		body, err1 := ioutil.ReadAll(resp.Body)
+		if err1 != nil {
+			return false, err1
+		} else {
+			//打印结果
+			//fmt.Println(string(body))
+			var result map[string]interface{}
+			err2 := json.Unmarshal(body, &result)
+			if err2 != nil {
+				return false, err2
+			} else {
+				if result["resultcode"].(float64) != http.StatusOK {
+					glog.Error("result:%s", string(body))
+					return false, errors.New("http req err:" + string(body))
+				}
+
+				//打印下数组数量
+				fmt.Println("回复结果数为 ", result["total"])
+				if result["total"].(float64) == 0 {
+					return false, errors.New("http result total 0")
+				}
+				//反序列化
+				err3 := mapstructure.Decode(result["records"].([]interface{})[0], bs)
+				if err3 != nil {
+					return false, err2
+				}
+			}
+		}
+	}
+	return true, nil
+}
+
+func GetFromCNINFByScode_test() {
+	bs := new(BalanceSheet)
+	_, err := bs.GetFromCNINFByScode("000001", "2021", cninfo.Q1)
+	if err != nil {
+		fmt.Println(err)
+	}
 }

@@ -1,10 +1,23 @@
 package CashFlowSheet
 
+import (
+	"FinanceTool/COM/cninfo"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/goinggo/mapstructure"
+	"github.com/golang/glog"
+	"io/ioutil"
+	"net/http"
+)
+
 /**
 现金流量表，数据类计算
 */
 
-//CashFlowSheet 现金流量表
+const urlApi = "http://webapi.cninfo.com.cn/api/stock/p_stock2302"
+
+//CashFlowSheet 现金流量表 "http://webapi.cninfo.com.cn/api/stock/p_stock2302"
 type CashFlowSheet struct {
 	SECNAME     string //证券简称
 	SECCODE     string //证券代码
@@ -113,4 +126,56 @@ type CashFlowSheet struct {
 	F070N float64 //加：其他原因对现金的影响2
 	F071N float64 //现金及现金等价物净增加额2
 	F096N float64 //信用减值损失
+}
+
+//GetFromCNINFByScode 从巨潮资讯平台以股票代码和日期为输入获取
+func (cs *CashFlowSheet) GetFromCNINFByScode(scode string, year string, q string) (bool, error) {
+	url := urlApi
+	params := map[string]string{
+		"scode": scode,
+		"rdate": cninfo.Getrdate(year, q),
+		"type":  "071001",
+	}
+	resp, err := cninfo.Post(url, nil, params, nil)
+	defer resp.Body.Close()
+	if err != nil {
+		return false, err
+	} else {
+		body, err1 := ioutil.ReadAll(resp.Body)
+		if err1 != nil {
+			return false, err1
+		} else {
+			//打印结果
+			//fmt.Println(string(body))
+			var result map[string]interface{}
+			err2 := json.Unmarshal(body, &result)
+			if err2 != nil {
+				return false, err2
+			} else {
+				if result["resultcode"].(float64) != http.StatusOK {
+					glog.Error("result:%s", string(body))
+					return false, errors.New("http req err:" + string(body))
+				}
+				//打印下数组数量
+				fmt.Println("回复结果数为 ", result["total"])
+				if result["total"].(float64) == 0 {
+					return false, errors.New("http result total 0")
+				}
+				//反序列化
+				err3 := mapstructure.Decode(result["records"].([]interface{})[0], cs)
+				if err3 != nil {
+					return false, err2
+				}
+			}
+		}
+	}
+	return true, nil
+}
+
+func GetFromCNINFByScode_test() {
+	cs := new(CashFlowSheet)
+	_, err := cs.GetFromCNINFByScode("000001", "2021", cninfo.Q1)
+	if err != nil {
+		fmt.Println(err)
+	}
 }

@@ -31,7 +31,7 @@ type LocalTokenInfo struct {
 
 var localToken LocalTokenInfo
 
-var usToken = false
+const usToken = false
 
 func init() {
 	if usToken {
@@ -41,7 +41,7 @@ func init() {
 		if len(localToken.tokenInfo.Access_token) == 0 {
 			token, err := GetToken()
 			if err != nil {
-				log.Println("本地token为空，获取token 错误%v", err)
+				log.Println("本地token为空，获取token 错误:", err)
 			} else {
 				localToken.tokenInfo = token
 				localToken.GetTime = time.Now()
@@ -90,8 +90,6 @@ var (
 func Getrdate(year string, q string) string {
 	return year + q
 }
-
-var Mcode = "" //这个是后台验证的，是时间戳的base64
 
 func Get(url string, params map[string]string, headers map[string]string) (*http.Response, error) {
 	//new request
