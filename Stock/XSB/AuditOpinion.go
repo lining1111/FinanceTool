@@ -1,6 +1,6 @@
 package XSB
 
-const apiAO = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6015"
+const APIAO = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6015"
 
 //AuditOpinion 审计意见
 //"http://webapi.cninfo.com.cn/api/neeq/p_neeq6015"

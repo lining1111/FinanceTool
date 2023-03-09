@@ -1,6 +1,6 @@
 package BSE
 
-const apiAO = "http://webapi.cninfo.com.cn/api/stock/p_stock2239_BSE"
+const APIAO = "http://webapi.cninfo.com.cn/api/stock/p_stock2239_BSE"
 
 //AuditOpinion 审计意见
 //"http://webapi.cninfo.com.cn/api/stock/p_stock2239_BSE"

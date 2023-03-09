@@ -1,6 +1,6 @@
 package HK
 
-const apiFR = "http://webapi.cninfo.com.cn/api/hk/p_hk4025"
+const APIFR = "http://webapi.cninfo.com.cn/api/hk/p_hk4025"
 
 //FinancialRatios 重要指标表（非银行） "http://webapi.cninfo.com.cn/api/hk/p_hk4025"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.

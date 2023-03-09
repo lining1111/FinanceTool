@@ -1,6 +1,6 @@
 package HK
 
-const apiIS = "http://webapi.cninfo.com.cn/api/hk/p_hk4024"
+const APIIS = "http://webapi.cninfo.com.cn/api/hk/p_hk4024"
 
 //IncomeSheet 综合损益表(非银行) "http://webapi.cninfo.com.cn/api/hk/p_hk4024"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.

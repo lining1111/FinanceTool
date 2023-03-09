@@ -1,8 +1,8 @@
 package BSE
 
-const urlApiBaseInfo = "http://webapi.cninfo.com.cn/api/stock/p_stock2101"
+const APIBaseInfo = "http://webapi.cninfo.com.cn/api/stock/p_stock2101_BSE"
 
-//BaseInfo 股票基本信息 "http://webapi.cninfo.com.cn/api/stock/p_stock2101"
+//BaseInfo 股票基本信息 "http://webapi.cninfo.com.cn/api/stock/p_stock2101_BSE"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；如： 000001,600000
 type BaseInfo struct {
 	ORGNAME string //机构名称
@@ -24,9 +24,9 @@ type BaseInfo struct {
 	F013V string  //ISIN
 }
 
-const urlApiStockFinanceDetail = "http://webapi.cninfo.com.cn/api/stock/p_rzrq3104"
+const APIStockFinanceDetail = "http://webapi.cninfo.com.cn/api/stock/p_rzrq3104_BSE"
 
-//StockFinanceDetail 融资融券明细数据 "http://webapi.cninfo.com.cn/api/stock/p_rzrq3104"
+//StockFinanceDetail 融资融券明细数据 "http://webapi.cninfo.com.cn/api/stock/p_rzrq3104_BSE"
 //params:	scode	股票代码	string	输入不超过300只股票代码，用逗号分隔；如： 000001,600000
 //			sdate	开始变动日期	string	否	支持格式示例：20161101 或2016-11-01 或2016/11/01
 //			edate	结束变动日期	string	否	支持格式示例：20161101 或2016-11-01 或2016/11/01
@@ -38,9 +38,9 @@ type StockFinanceDetail struct {
 	F001N float64 //本日融资余额 单位：元
 	F002N float64 //本日融资买入额 单位：元
 	F003N float64 //本日融资偿还额 单位：元
-	F004N float64 //本日融券余量 单位：股
-	F006N float64 //本日融券卖出量 单位：股
-	F007N float64 //本日融券偿还量 单位：股
+	F004N uint64  //本日融券余量 单位：股
+	F006N uint64  //本日融券卖出量 单位：股
+	F007N uint64  //本日融券偿还量 单位：股
 	F008N float64 //融券余量金额 单位：元
 	F009N float64 //融资融券余额	单位：元
 	F010V string  //数据来源
@@ -49,13 +49,13 @@ type StockFinanceDetail struct {
 	MEMO  string  //备注
 }
 
-const apiDetailNew = "http://webapi.cninfo.com.cn/api/stock/p_stock2401"
-const apiDetailHistory = "http://webapi.cninfo.com.cn/api/stock/p_stock2402"
+const APIDetailNew = "http://webapi.cninfo.com.cn/api/stock/p_stock2401_BSE"
+const APIDetailHistory = "http://webapi.cninfo.com.cn/api/stock/p_stock2402_BSE"
 
 //Detail
-//股票最新日行情 "http://webapi.cninfo.com.cn/api/stock/p_stock2401"
+//股票最新日行情 "http://webapi.cninfo.com.cn/api/stock/p_stock2401_BSE"
 //params:	scode	股票代码	string	否	输入不超过50只股票代码，用逗号分隔；如： 000001,600000
-//股票历史日行情 "http://webapi.cninfo.com.cn/api/stock/p_stock2402"
+//股票历史日行情 "http://webapi.cninfo.com.cn/api/stock/p_stock2402_BSE"
 //params:	scode	股票代码	string	输入1只股票代码，用逗号分隔；如： 000001
 //			sdate	开始查询日期	string	支持格式示例：20161101 或2016-11-01 或2016/11/01
 //			edate	结束查询日期	string	支持格式示例：20161101 或2016-11-01 或2016/11/01
@@ -67,11 +67,11 @@ type Detail struct {
 	F001V string  //交易所
 	F002N float64 //昨收盘 单位：元
 	F003N float64 //开盘盘 单位：元
-	F004N float64 //成交数量 单位：股
+	F004N uint64  //成交数量 单位：股
 	F005N float64 //最高价 单位：元
 	F006N float64 //最低价 单位：元
 	F007N float64 //最近成交价 单位：元
-	F008N float64 //总笔数 单位：笔
+	F008N uint64  //总笔数 单位：笔
 	F009N float64 //涨跌 单位：元
 	F010N float64 //涨跌幅 单位：%
 	F011N float64 //成交金额 单位：元
@@ -82,9 +82,9 @@ type Detail struct {
 	F026N float64 //市盈率
 }
 
-const apiBlockTrade = "http://webapi.cninfo.com.cn/api/stock/p_stock2416"
+const APIBlockTrade = "http://webapi.cninfo.com.cn/api/stock/p_stock2416_BSE"
 
-//BlockTrade 大宗交易数据 "http://webapi.cninfo.com.cn/api/stock/p_stock2416"
+//BlockTrade 大宗交易数据 "http://webapi.cninfo.com.cn/api/stock/p_stock2416_BSE"
 //params: 	scode	股票代码	string	股票代码不为空，交易日期为空时，则查询股票的所有交易数据
 //			tdate	交易日期	string	交易日期与股票代码不能同时为空，输入一个交易日期，选择该日期所有数据
 type BlockTrade struct {

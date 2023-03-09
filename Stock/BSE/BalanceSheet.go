@@ -1,6 +1,6 @@
 package BSE
 
-const apiBS = "http://webapi.cninfo.com.cn/api/stock/p_stock2300_BSE"
+const APIBS = "http://webapi.cninfo.com.cn/api/stock/p_stock2300_BSE"
 
 //BalanceSheet 资产负债表 "http://webapi.cninfo.com.cn/api/stock/p_stock2300_BSE"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.

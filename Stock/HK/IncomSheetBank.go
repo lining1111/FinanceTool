@@ -1,6 +1,6 @@
 package HK
 
-const apiISBank = "http://webapi.cninfo.com.cn/api/hk/p_hk4021"
+const APIISBank = "http://webapi.cninfo.com.cn/api/hk/p_hk4021"
 
 //IncomeSheetBank 综合损益表(银行) "http://webapi.cninfo.com.cn/api/hk/p_hk4021"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.
@@ -44,7 +44,7 @@ type IncomeSheetBank struct {
 	F028N float64 //每股盈利（港元）	numeric
 	F029N float64 //每股派息（港元）	numeric
 	F030V string  //核数师意见	varchar
-	F031N float64 //发行股数(年度)	numeric
+	F031N uint64  //发行股数(年度)	numeric
 	F032N float64 //资本证券之应付票息（报表货币兑港元）	numeric
 	F033N float64 //报告股东应占溢利	numeric
 	F034N float64 //每股盈利（报告货币）	numeric

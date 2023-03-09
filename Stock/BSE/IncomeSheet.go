@@ -1,6 +1,6 @@
 package BSE
 
-const apiIS = "http://webapi.cninfo.com.cn/api/stock/p_stock2301_BSE"
+const APIIS = "http://webapi.cninfo.com.cn/api/stock/p_stock2301_BSE"
 
 //IncomeSheet 利润表 "http://webapi.cninfo.com.cn/api/stock/p_stock2301_BSE"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.

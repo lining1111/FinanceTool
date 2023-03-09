@@ -1,6 +1,6 @@
 package XSB
 
-const apiFR = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6017"
+const APIFR = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6017"
 
 //FinancialRatios 财务指标 "http://webapi.cninfo.com.cn/api/neeq/p_neeq6017"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.

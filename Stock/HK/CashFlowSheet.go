@@ -4,7 +4,7 @@ package HK
 现金流量表，数据类计算
 */
 
-const apiCS = "http://webapi.cninfo.com.cn/api/hk/p_hk4019"
+const APICS = "http://webapi.cninfo.com.cn/api/hk/p_hk4019"
 
 //CashFlowSheet 现金流量表 "http://webapi.cninfo.com.cn/api/hk/p_hk4019"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；输入多个代码时，不允许报告期为空.

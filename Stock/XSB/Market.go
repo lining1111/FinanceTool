@@ -1,6 +1,6 @@
 package XSB
 
-const urlApiBaseInfo = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6003"
+const APIBaseInfo = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6003"
 
 //BaseInfo 新三板证券信息表 "http://webapi.cninfo.com.cn/api/neeq/p_neeq6003"
 //params:	scode	股票代码	string	输入不超过50只股票代码，用逗号分隔；如： 000001,600000
@@ -15,7 +15,7 @@ type BaseInfo struct {
 	F006V string  //交易市场	varchar		详见交易市场编码备注
 	F007D string  //挂牌日期	date
 	F008D string  //摘牌日期	date
-	F009N float64 //初始挂牌数量	varchar		单位：股
+	F009N uint64  //初始挂牌数量	varchar		单位：股
 	F015V string  //发行机构名称	varchar
 	F019N float64 //面值	decimal		单位：元
 	F017V string  //挂牌状态	varchar		基础层挂牌、终止挂牌、创新层挂牌
@@ -26,8 +26,7 @@ type BaseInfo struct {
 	MEMO  string  //备注	varchar
 }
 
-const apiDetailNew = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6028"
-const apiDetailHistory = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6028"
+const APIDetail = "http://webapi.cninfo.com.cn/api/neeq/p_neeq6028"
 
 //Detail
 //新三板股份报价日行情信息 "http://webapi.cninfo.com.cn/api/neeq/p_neeq6028"
@@ -42,29 +41,10 @@ type Detail struct {
 	F001N float64 //昨日收盘价	decimal		单位：元
 	F002N float64 //今日开盘价	decimal		单位：元
 	F003N float64 //最近成交价	decimal		单位：元
-	F004N float64 //成交数量	decimal		单位：股
+	F004N uint64  //成交数量	decimal		单位：股
 	F005N float64 //成交金额(原币)	decimal
 	F007N float64 //最高成交价	decimal		单位：元
 	F008N float64 //最低成交价	decimal		单位：元
 	F012N float64 //涨跌幅	decimal		单位：%
 	MEMO  string  //备注	varchar
-}
-
-const apiBlockTrade = "http://webapi.cninfo.com.cn/api/stock/p_stock2416"
-
-//BlockTrade 大宗交易数据 "http://webapi.cninfo.com.cn/api/stock/p_stock2416"
-//params: 	scode	股票代码	string	股票代码不为空，交易日期为空时，则查询股票的所有交易数据
-//			tdate	交易日期	string	交易日期与股票代码不能同时为空，输入一个交易日期，选择该日期所有数据
-type BlockTrade struct {
-	SECCODE   string //证券代码
-	SECNAME   string //证券简称
-	TRADEDATE string //交易日期
-
-	F001V string  //交易所
-	F007N float64 //序号
-	F002V string  //买方营业部
-	F003V string  //卖方营业部
-	F004N float64 //成交价格
-	F005N float64 //成交量
-	F006N float64 //成交金额
 }

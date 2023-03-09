@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-const apiAO = "http://webapi.cninfo.com.cn/api/stock/p_stock2239"
+const APIAO = "http://webapi.cninfo.com.cn/api/stock/p_stock2239"
 
 //AuditOpinion 审计意见
 //"http://webapi.cninfo.com.cn/api/stock/p_stock2239"
@@ -40,7 +40,7 @@ type AuditOpinion struct {
 
 func AOGetFromCNINFByScode_test() {
 	ao := make([]AuditOpinion, 1, 20000)
-	url := apiAO
+	url := APIAO
 	params := map[string]string{
 		"scode": "000001",
 		"sdate": cninfo.Getrdate("2021", cninfo.Q1),
