@@ -6,11 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/goinggo/mapstructure"
 	"github.com/golang/glog"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"reflect"
 	"strconv"
 	"sync"
 	"time"
@@ -280,10 +280,23 @@ func GetToken() (TokenInfo, error) {
 	}
 }
 
+type rspResult struct {
+	Resultcode int         `json:"resultcode"`
+	Resultmsg  string      `json:"resultmsg"`
+	Count      int         `json:"count,omitempty"`
+	Total      int         `json:"total,omitempty"`
+	Records    interface{} `json:"records,omitempty"`
+}
+
 func GetInfoByScodeDate(url string, params map[string]string, info interface{}) error {
 	if len(url) == 0 {
 		return errors.New("url empty")
 	}
+	kind := reflect.TypeOf(info).Elem().Kind()
+	if kind != reflect.Slice {
+		return errors.New("info not a slice interface")
+	}
+
 	resp, err := Post(url, nil, params, nil)
 	defer resp.Body.Close()
 	if err != nil {
@@ -295,26 +308,36 @@ func GetInfoByScodeDate(url string, params map[string]string, info interface{}) 
 		} else {
 			//打印结果
 			//fmt.Println(string(body))
-			var result map[string]interface{}
-			err2 := json.Unmarshal(body, &result)
+			result := &rspResult{}
+			err2 := json.Unmarshal(body, result)
 			if err2 != nil {
 				return err2
 			} else {
-				if result["resultcode"].(float64) != http.StatusOK {
+				if result.Resultcode != http.StatusOK {
 					glog.Error("result:%s", string(body))
 					return errors.New("http req err:" + string(body))
 				}
 
 				//打印下数组数量
-				fmt.Println("回复结果数为 ", result["total"])
-				if result["total"].(float64) == 0 {
-					return errors.New("http result total 0")
+				glog.Info(fmt.Sprintf("回复count:%d,total:%d ", result.Count, result.Total))
+				if result.Count == 0 {
+					return errors.New("http result count 0")
 				}
 				//反序列化
-				err3 := mapstructure.Decode(result["records"], info)
-				if err3 != nil {
-					return err3
+				kind := reflect.TypeOf(result.Records).Kind()
+				if kind != reflect.Slice {
+					return errors.New("result records not a slice")
 				}
+				b, err := json.Marshal(result.Records)
+				if err != nil {
+					return err
+				} else {
+					err := json.Unmarshal(b, info)
+					if err != nil {
+						return err
+					}
+				}
+
 			}
 		}
 	}
