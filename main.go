@@ -1,11 +1,14 @@
 package main
 
 import (
-	"FinanceTool/COM/cninfo"
-	"FinanceTool/Stock/HSB"
+	"FinanceTool/Stock"
 	"flag"
 	"github.com/golang/glog"
 )
+
+func init() {
+	glog.Info("start")
+}
 
 func main() {
 	var port int
@@ -20,17 +23,6 @@ func main() {
 	//HSB.IMRGetFromCNINFByScode_test()
 	//HSB.AOGetFromCNINFByScode_test()
 	//HSB.FRGetFromCNINFByScode_test()
-	baseInfo := make([]HSB.BaseInfo, 1, 2000)
-	params := map[string]string{
-		"scode": "000001",
-		"sdate": cninfo.Getrdate("2021", cninfo.Q1),
-		"edate": cninfo.Getrdate("2021", cninfo.Q1),
-		"type":  "071001",
-	}
-
-	err := cninfo.GetInfoByScodeDate(HSB.APIBaseInfo, params, &baseInfo)
-	if err != nil {
-		glog.Info(err)
-	}
-
+	//cninfo.PublicCodeData_test()
+	Stock.Test1()
 }

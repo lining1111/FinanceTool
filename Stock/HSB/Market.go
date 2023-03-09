@@ -1,5 +1,7 @@
 package HSB
 
+import "FinanceTool/COM/cninfo"
+
 const APIBaseInfo = "http://webapi.cninfo.com.cn/api/stock/p_stock2101"
 
 //BaseInfo 股票基本信息 "http://webapi.cninfo.com.cn/api/stock/p_stock2101"
@@ -22,6 +24,36 @@ type BaseInfo struct {
 	F011V string  //上市状态	varchar
 	F012N float64 //面值	decimal		单位：元
 	F013V string  //ISIN	varchar
+}
+
+//获取所有股票基本信息
+func GetAllStockBaseInfo(baseInfos *[]BaseInfo) error {
+	params := map[string]string{}
+	return cninfo.GetInfoByScodeDate(APIBaseInfo, params, baseInfos, cap(*baseInfos))
+}
+
+const APIStockSectorInfo = "http://webapi.cninfo.com.cn/api/stock/p_stock0004"
+
+//StockSectorInfo 股票所属板块 "http://webapi.cninfo.com.cn/api/stock/p_stock0004"
+//scode	股票代码	string	是	输入不超过300只股票代码，用逗号分隔；如： 000001,600000
+//typecode	类别代码	string	否	可以传入多个类别代码，用逗号分隔， 编码：137001 市场分类 137002 证监会行业分类 137004 申银万国行业分类 137005 新财富行业分类 137006 地区省市分类 137007 指数成份股 137008 概念板块
+type StockSectorInfo struct {
+	SECCODE string //证券代码	varchar
+	SECNAME string //证券简称	varchar
+
+	F001V string //分类标准编码	varchar
+	F002V string //分类标准	varchar
+	F003V string //板块编码	varchar
+	F004V string //板块一类名称	varchar
+	F005V string //板块二类名称	varchar
+	F006V string //板块三类名称	varchar
+	F007V string //板块四类名称	varchar
+	F008V string //板块五类名称	varchar
+	F009V string //板块一类编码	varchar
+	F010V string //板块二类编码	varchar
+	F011V string //板块三类编码	varchar
+	F012V string //板块四类编码	varchar
+	F013V string //板块五类编码	varchar
 }
 
 const APIStockFinanceDetail = "http://webapi.cninfo.com.cn/api/stock/p_rzrq3104"

@@ -62,7 +62,7 @@ func IMRGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &imr)
+	err := cninfo.GetInfoByScodeDate(url, params, &imr, cap(imr))
 	if err != nil {
 		fmt.Println(err)
 	}

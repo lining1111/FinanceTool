@@ -48,7 +48,7 @@ func AOGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &ao)
+	err := cninfo.GetInfoByScodeDate(url, params, &ao, cap(ao))
 	if err != nil {
 		fmt.Println(err)
 	}

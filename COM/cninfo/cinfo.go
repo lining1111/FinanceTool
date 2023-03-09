@@ -16,15 +16,6 @@ import (
 	"time"
 )
 
-var usr = "wOtj05dLpabViMzo1tIN5VJ2X4krNDfm"
-var passwd = "iJSoU1ak7wa3SsW2L2CvIJ8DWQowwhiS"
-
-type TokenInfo struct {
-	Access_token  string `json:"access_token"`
-	Refresh_token string `json:"refresh_token,omitempty"`
-	Expires_in    int    `json:"expires_in"`
-}
-
 type LocalTokenInfo struct {
 	tokenInfo TokenInfo
 	GetTime   time.Time
@@ -35,62 +26,46 @@ var localToken LocalTokenInfo
 
 const usToken = false
 
-func init() {
-	if usToken {
-
-		//判断token是否为空，空的话获取一次
-		localToken.mtx.Lock()
-		if len(localToken.tokenInfo.Access_token) == 0 {
-			token, err := GetToken()
-			if err != nil {
-				log.Println("本地token为空，获取token 错误:", err)
-			} else {
-				localToken.tokenInfo = token
-				localToken.GetTime = time.Now()
-				log.Println("本地token为空，获取token:", localToken.tokenInfo,
-					",time:", localToken.GetTime.String())
-			}
+func tokenFresh() {
+	//判断token是否为空，空的话获取一次
+	localToken.mtx.Lock()
+	if len(localToken.tokenInfo.Access_token) == 0 {
+		err := localToken.tokenInfo.Get()
+		if err != nil {
+			log.Println("本地token为空，获取token 错误:", err)
+		} else {
+			localToken.GetTime = time.Now()
+			log.Println("本地token为空，获取token:", localToken.tokenInfo,
+				",time:", localToken.GetTime.String())
 		}
-		localToken.mtx.Unlock()
-		//启动一个线程，如果本地token信息过期的话，刷新token
-		var wg sync.WaitGroup
-
-		wg.Add(1)
-		go func() {
-			wg.Done()
-			for true {
-				time.Sleep(time.Duration(60) * time.Second)
-				localToken.mtx.Lock()
-				//判断是否过期
-				du := time.Now().Unix() - localToken.GetTime.Unix()
-				if du >= int64(localToken.tokenInfo.Expires_in) {
-					glog.Info("token 过期，重新获取token")
-					token, err := GetToken()
-					if err != nil {
-						glog.Info("获取token 错误%v", err)
-					} else {
-						localToken.tokenInfo = token
-						localToken.GetTime = time.Now()
-						glog.Info("获取token:%v,time:%v",
-							localToken.tokenInfo, localToken.GetTime.String())
-					}
-				}
-				localToken.mtx.Unlock()
-			}
-		}()
-		wg.Wait()
 	}
-}
+	localToken.mtx.Unlock()
+	//启动一个线程，如果本地token信息过期的话，刷新token
+	var wg sync.WaitGroup
 
-var (
-	Q1 = "-03-31"
-	Q2 = "-06-30"
-	Q3 = "-09-30"
-	Q4 = "-12-31"
-)
-
-func Getrdate(year string, q string) string {
-	return year + q
+	wg.Add(1)
+	go func() {
+		wg.Done()
+		for true {
+			time.Sleep(time.Duration(60) * time.Second)
+			localToken.mtx.Lock()
+			//判断是否过期
+			du := time.Now().Unix() - localToken.GetTime.Unix()
+			if du >= int64(localToken.tokenInfo.Expires_in) {
+				log.Println("token 过期，重新获取token")
+				err := localToken.tokenInfo.Get()
+				if err != nil {
+					log.Printf("获取token 错误%v", err)
+				} else {
+					localToken.GetTime = time.Now()
+					log.Printf("获取token:%v,time:%v",
+						localToken.tokenInfo, localToken.GetTime.String())
+				}
+			}
+			localToken.mtx.Unlock()
+		}
+	}()
+	wg.Wait()
 }
 
 func Get(url string, params map[string]string, headers map[string]string) (*http.Response, error) {
@@ -254,41 +229,47 @@ func PostWithoutToken(url string, body interface{}, params map[string]string, he
 	return client.Do(req)
 }
 
-func GetToken() (TokenInfo, error) {
-	var tokenInfo TokenInfo
+var usr = "wOtj05dLpabViMzo1tIN5VJ2X4krNDfm"
+var passwd = "iJSoU1ak7wa3SsW2L2CvIJ8DWQowwhiS"
+
+const APIGetToken = "http://webapi.cninfo.com.cn/api-cloud-platform/oauth2/token"
+
+type TokenInfo struct {
+	Access_token  string `json:"access_token"`
+	Refresh_token string `json:"refresh_token,omitempty"`
+	Expires_in    int    `json:"expires_in"`
+}
+
+func (t *TokenInfo) Get() error {
 	params := map[string]string{
 		"grant_type":    "client_credentials",
 		"client_id":     usr,
 		"client_secret": passwd,
 	}
-	resp, err := PostWithoutToken("http://webapi.cninfo.com.cn/api-cloud-platform/oauth2/token", nil, params, nil)
+	resp, err := PostWithoutToken(APIGetToken, nil, params, nil)
 	if err != nil {
-		return tokenInfo, err
+		return err
 	} else {
 		body, err1 := ioutil.ReadAll(resp.Body)
 		if err1 != nil {
-			return tokenInfo, err1
+			return err1
 		}
-
-		err2 := json.Unmarshal(body, &tokenInfo)
-		if err2 != nil {
-			return tokenInfo, err2
-		} else {
-			return tokenInfo, nil
-		}
+		return json.Unmarshal(body, t)
 
 	}
 }
 
-type rspResult struct {
-	Resultcode int         `json:"resultcode"`
-	Resultmsg  string      `json:"resultmsg"`
-	Count      int         `json:"count,omitempty"`
-	Total      int         `json:"total,omitempty"`
-	Records    interface{} `json:"records,omitempty"`
-}
+const MaxResultLimt = 20000
 
-func GetInfoByScodeDate(url string, params map[string]string, info interface{}) error {
+func GetInfoByScodeDate(url string, params map[string]string, info interface{}, cap int) error {
+	type rspResult struct {
+		Resultcode int         `json:"resultcode"`
+		Resultmsg  string      `json:"resultmsg"`
+		Count      int         `json:"count,omitempty"`
+		Total      int         `json:"total,omitempty"`
+		Records    interface{} `json:"records,omitempty"`
+	}
+
 	if len(url) == 0 {
 		return errors.New("url empty")
 	}
@@ -297,6 +278,7 @@ func GetInfoByScodeDate(url string, params map[string]string, info interface{}) 
 		return errors.New("info not a slice interface")
 	}
 
+	params["@limit"] = strconv.Itoa(cap)
 	resp, err := Post(url, nil, params, nil)
 	defer resp.Body.Close()
 	if err != nil {
@@ -332,14 +314,10 @@ func GetInfoByScodeDate(url string, params map[string]string, info interface{}) 
 				if err != nil {
 					return err
 				} else {
-					err := json.Unmarshal(b, info)
-					if err != nil {
-						return err
-					}
-				}
+					return json.Unmarshal(b, info)
 
+				}
 			}
 		}
 	}
-	return nil
 }

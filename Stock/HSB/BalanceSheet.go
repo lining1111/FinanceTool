@@ -140,17 +140,18 @@ type BalanceSheet struct {
 	F122N float64 //租赁负债	decimal(18,2)		2019年8月新增
 }
 
+//合并本期 定期报告
 func BSGetFromCNINFByScode_test() {
 	bs := make([]BalanceSheet, 1, 20000)
 	url := APIBS
 	params := map[string]string{
 		"scode": "000001",
-		"sdate": cninfo.Getrdate("2021", cninfo.Q1),
-		"edate": cninfo.Getrdate("2021", cninfo.Q1),
-		"type":  "071001",
+		"sdate": cninfo.Getrdate("2021", cninfo.Q2),
+		"edate": cninfo.Getrdate("2021", cninfo.Q2),
+		"type":  cninfo.PublicCode071["合并上期"],
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &bs)
+	err := cninfo.GetInfoByScodeDate(url, params, &bs, cap(bs))
 	if err != nil {
 		fmt.Println(err)
 	}

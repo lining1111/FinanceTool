@@ -124,7 +124,7 @@ func CSGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &cs)
+	err := cninfo.GetInfoByScodeDate(url, params, &cs, cap(cs))
 	if err != nil {
 		fmt.Println(err)
 	}
