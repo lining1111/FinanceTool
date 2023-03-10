@@ -1,8 +1,17 @@
 package cninfo
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/go-ping/ping"
+)
 
 func init() {
+	_, err := ping.NewPinger("http://webapi.cninfo.com.cn")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	if usToken {
 		go tokenFresh()
 	}
