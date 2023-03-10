@@ -140,19 +140,27 @@ type BalanceSheet struct {
 	F122N float64 //租赁负债	decimal(18,2)		2019年8月新增
 }
 
-//合并本期 定期报告
+//BSGetFromCNINFByScode_test 合并本期 定期报告
 func BSGetFromCNINFByScode_test() {
-	bs := make([]BalanceSheet, 1, 20000)
+	bs := make([]BalanceSheet, 0, 20000)
 	url := APIBS
 	params := map[string]string{
 		"scode": "000001",
-		"sdate": cninfo.Getrdate("2021", cninfo.Q2),
+		"sdate": cninfo.Getrdate("2021", cninfo.Q1),
 		"edate": cninfo.Getrdate("2021", cninfo.Q2),
-		"type":  cninfo.PublicCode071["合并上期"],
+		"type":  cninfo.PublicCode071["合并本期"],
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &bs, cap(bs))
+	err := cninfo.GetInfoByScodeDate(url, params, &bs)
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+type BSU []BalanceSheet
+
+//SetExcel 将资产负债表写入excel 返回 excel表格的文件名
+func (u *BSU) SetExcel() (string, error) {
+
+	return "", nil
 }

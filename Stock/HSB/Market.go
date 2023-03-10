@@ -29,7 +29,7 @@ type BaseInfo struct {
 //获取所有股票基本信息
 func GetAllStockBaseInfo(baseInfos *[]BaseInfo) error {
 	params := map[string]string{}
-	return cninfo.GetInfoByScodeDate(APIBaseInfo, params, baseInfos, cap(*baseInfos))
+	return cninfo.GetInfoByScodeDate(APIBaseInfo, params, baseInfos)
 }
 
 const APIStockSectorInfo = "http://webapi.cninfo.com.cn/api/stock/p_stock0004"

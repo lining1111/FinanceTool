@@ -72,7 +72,7 @@ func Get(url string, params map[string]string, headers map[string]string) (*http
 	//new request
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		glog.Error(err)
+		glog.V(1).Info(err)
 		return nil, errors.New("new request is fail ")
 	}
 	//add params
@@ -120,7 +120,7 @@ func Get(url string, params map[string]string, headers map[string]string) (*http
 
 	//http client
 	client := &http.Client{}
-	glog.Info("Go ", http.MethodPost, " URL:", req.URL.String())
+	glog.V(1).Info("Go ", http.MethodPost, " URL:", req.URL.String())
 	return client.Do(req)
 }
 
@@ -132,7 +132,7 @@ func Post(url string, body interface{}, params map[string]string, headers map[st
 		var err error
 		bodyJson, err = json.Marshal(body)
 		if err != nil {
-			glog.Error(err)
+			glog.V(1).Info(err)
 			return nil, errors.New("http post body to json failed")
 		}
 	}
@@ -185,8 +185,10 @@ func Post(url string, body interface{}, params map[string]string, headers map[st
 	}
 
 	//http client
-	client := &http.Client{}
-	glog.Info("Go ", http.MethodPost, " URL:", req.URL.String())
+	client := &http.Client{
+		Timeout: time.Duration(5) * time.Second,
+	}
+	glog.V(1).Info("Go ", http.MethodPost, " URL:", req.URL.String())
 	return client.Do(req)
 }
 
@@ -208,7 +210,6 @@ func PostWithoutToken(url string, body interface{}, params map[string]string, he
 		return nil, errors.New("new request is fail: %v \n")
 	}
 	req.Header.Set("Content-type", "application/x-www-form-urlencoded")
-	//req.Header.Set("Referer","strict-origin-when-cross-origin")
 	//add params
 	q := req.URL.Query()
 	if params != nil {
@@ -225,7 +226,6 @@ func PostWithoutToken(url string, body interface{}, params map[string]string, he
 	}
 	//http client
 	client := &http.Client{}
-	//glog.Info("Go %s URL : %s \n", http.MethodPost, req.URL.String())
 	return client.Do(req)
 }
 
@@ -259,9 +259,9 @@ func (t *TokenInfo) Get() error {
 	}
 }
 
-const MaxResultLimt = 20000
+const MaxResultLimit = 20000
 
-func GetInfoByScodeDate(url string, params map[string]string, info interface{}, cap int) error {
+func GetInfoByScodeDate(url string, params map[string]string, info interface{}) error {
 	type rspResult struct {
 		Resultcode int         `json:"resultcode"`
 		Resultmsg  string      `json:"resultmsg"`
@@ -273,17 +273,20 @@ func GetInfoByScodeDate(url string, params map[string]string, info interface{}, 
 	if len(url) == 0 {
 		return errors.New("url empty")
 	}
+	//获取类型
 	kind := reflect.TypeOf(info).Elem().Kind()
 	if kind != reflect.Slice {
 		return errors.New("info not a slice interface")
 	}
+	//获取数组的长度
+	capacity := reflect.ValueOf(info).Elem().Cap()
 
-	params["@limit"] = strconv.Itoa(cap)
+	params["@limit"] = strconv.Itoa(capacity)
 	resp, err := Post(url, nil, params, nil)
-	defer resp.Body.Close()
 	if err != nil {
 		return err
 	} else {
+		defer resp.Body.Close()
 		body, err1 := ioutil.ReadAll(resp.Body)
 		if err1 != nil {
 			return err1
@@ -296,12 +299,12 @@ func GetInfoByScodeDate(url string, params map[string]string, info interface{}, 
 				return err2
 			} else {
 				if result.Resultcode != http.StatusOK {
-					glog.Error("result:%s", string(body))
+					glog.V(1).Info("result:%s", string(body))
 					return errors.New("http req err:" + string(body))
 				}
 
 				//打印下数组数量
-				glog.Info(fmt.Sprintf("回复count:%d,total:%d ", result.Count, result.Total))
+				glog.V(1).Info(fmt.Sprintf("回复count:%d,total:%d ", result.Count, result.Total))
 				if result.Count == 0 {
 					return errors.New("http result count 0")
 				}

@@ -147,7 +147,7 @@ type FinancialRatios struct {
 }
 
 func FRGetFromCNINFByScode_test() {
-	fr := make([]FinancialRatios, 1, 20000)
+	fr := make([]FinancialRatios, 0, 20000)
 	url := APIFR
 	params := map[string]string{
 		"scode": "000001",
@@ -156,7 +156,7 @@ func FRGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &fr, cap(fr))
+	err := cninfo.GetInfoByScodeDate(url, params, &fr)
 	if err != nil {
 		fmt.Println(err)
 	}

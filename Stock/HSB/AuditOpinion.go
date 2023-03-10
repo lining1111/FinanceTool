@@ -39,7 +39,7 @@ type AuditOpinion struct {
 }
 
 func AOGetFromCNINFByScode_test() {
-	ao := make([]AuditOpinion, 1, 20000)
+	ao := make([]AuditOpinion, 0, 20000)
 	url := APIAO
 	params := map[string]string{
 		"scode": "000001",
@@ -48,7 +48,7 @@ func AOGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &ao, cap(ao))
+	err := cninfo.GetInfoByScodeDate(url, params, &ao)
 	if err != nil {
 		fmt.Println(err)
 	}

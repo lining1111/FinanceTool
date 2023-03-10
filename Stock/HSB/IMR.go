@@ -53,7 +53,7 @@ type IMR struct {
 }
 
 func IMRGetFromCNINFByScode_test() {
-	imr := make([]IMR, 1, 20000)
+	imr := make([]IMR, 0, 20000)
 	url := APIIMR
 	params := map[string]string{
 		"scode": "000001",
@@ -62,7 +62,7 @@ func IMRGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &imr, cap(imr))
+	err := cninfo.GetInfoByScodeDate(url, params, &imr)
 	if err != nil {
 		fmt.Println(err)
 	}

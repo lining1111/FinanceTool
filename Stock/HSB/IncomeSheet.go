@@ -86,7 +86,7 @@ type IncomeSheet struct {
 }
 
 func ISGetFromCNINFByScode_test() {
-	is := make([]IncomeSheet, 1, 20000)
+	is := make([]IncomeSheet, 0, 20000)
 	url := APIIS
 	params := map[string]string{
 		"scode": "000001",
@@ -95,7 +95,7 @@ func ISGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &is, cap(is))
+	err := cninfo.GetInfoByScodeDate(url, params, &is)
 	if err != nil {
 		fmt.Println(err)
 	}

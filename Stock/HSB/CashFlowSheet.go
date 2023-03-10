@@ -115,7 +115,7 @@ type CashFlowSheet struct {
 }
 
 func CSGetFromCNINFByScode_test() {
-	cs := make([]CashFlowSheet, 1, 20000)
+	cs := make([]CashFlowSheet, 0, 20000)
 	url := APICS
 	params := map[string]string{
 		"scode": "000001",
@@ -124,7 +124,7 @@ func CSGetFromCNINFByScode_test() {
 		"type":  "071001",
 	}
 
-	err := cninfo.GetInfoByScodeDate(url, params, &cs, cap(cs))
+	err := cninfo.GetInfoByScodeDate(url, params, &cs)
 	if err != nil {
 		fmt.Println(err)
 	}

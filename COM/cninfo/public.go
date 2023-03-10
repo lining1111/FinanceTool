@@ -45,11 +45,11 @@ type PublicCodeData struct {
 	F005V string //类目名称（英文）	VARCHAR
 }
 
-func getPublicCode(subtype string, result *[]PublicCodeData, cap int) error {
+func getPublicCode(subtype string, result *[]PublicCodeData) error {
 	params := map[string]string{
 		"subtype": subtype,
 	}
-	return GetInfoByScodeDate(APIPublicCodeData, params, result, cap)
+	return GetInfoByScodeDate(APIPublicCodeData, params, result)
 
 }
 
@@ -57,7 +57,7 @@ type PC map[string]string
 
 func (pc *PC) GetType() error {
 	result := make([]PublicCodeData, 1, 10000)
-	err := getPublicCode("", &result, cap(result))
+	err := getPublicCode("", &result)
 	if err != nil {
 		return err
 	} else {
@@ -76,7 +76,7 @@ func (pc *PC) GetType() error {
 
 func (pc *PC) GetSubtype(subtype string) error {
 	result := make([]PublicCodeData, 1, 10000)
-	err := getPublicCode(subtype, &result, cap(result))
+	err := getPublicCode(subtype, &result)
 	if err != nil {
 		return err
 	} else {
@@ -102,7 +102,7 @@ func PublicCodeData_test() {
 	params := map[string]string{
 		"subtype": "071",
 	}
-	err := GetInfoByScodeDate(APIPublicCodeData, params, &result, cap(result))
+	err := GetInfoByScodeDate(APIPublicCodeData, params, &result)
 	fmt.Println(err)
 }
 
@@ -124,8 +124,8 @@ type PublicCodeL2 struct {
 var MPublicCodeL0 PublicCodeL0
 
 func (pcl0 *PublicCodeL0) Get() error {
-	result := make([]PublicCodeData, 1, 10000)
-	err := getPublicCode("", &result, cap(result))
+	result := make([]PublicCodeData, 0, 10000)
+	err := getPublicCode("", &result)
 	if err != nil {
 		return err
 	} else {
@@ -175,7 +175,7 @@ func P0005GetAll() error {
 	url := "http://webapi.cninfo.com.cn/api/public/p_public0005"
 	p5 := make([]Public0005, 1, 10000)
 	params := map[string]string{}
-	err := GetInfoByScodeDate(url, params, &p5, cap(p5))
+	err := GetInfoByScodeDate(url, params, &p5)
 	if err != nil {
 		return err
 	} else {
