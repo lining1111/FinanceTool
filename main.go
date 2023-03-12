@@ -24,7 +24,9 @@ func main() {
 	//cninfo.PublicCodeData_test()
 	//Stock.Test1()
 	err := excel.SetExcelTitle("./excel/format/HSB.xlsx", "资产负债表", HSB.BalanceSheet{})
-	fmt.Println(err)
+	if err != nil {
+		fmt.Println(err)
+	}
 	titles, err := excel.GetExcelTtile("./excel/format/HSB.xlsx", "资产负债表")
 	if err != nil {
 		fmt.Println(err)
