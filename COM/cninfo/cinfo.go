@@ -68,7 +68,11 @@ func tokenFresh() {
 	wg.Wait()
 }
 
+const periodControl = 50
+
 func Get(url string, params map[string]string, headers map[string]string) (*http.Response, error) {
+	//通过访问频率
+	time.Sleep(time.Duration(periodControl) * time.Millisecond)
 	//new request
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -125,6 +129,8 @@ func Get(url string, params map[string]string, headers map[string]string) (*http
 }
 
 func Post(url string, body interface{}, params map[string]string, headers map[string]string) (*http.Response, error) {
+	//通过访问频率
+	time.Sleep(time.Duration(periodControl) * time.Millisecond)
 	//add post body
 	var bodyJson []byte
 	var req *http.Request
@@ -193,6 +199,8 @@ func Post(url string, body interface{}, params map[string]string, headers map[st
 }
 
 func PostWithoutToken(url string, body interface{}, params map[string]string, headers map[string]string) (*http.Response, error) {
+	//通过访问频率
+	time.Sleep(time.Duration(periodControl) * time.Millisecond)
 	//add post body
 	var bodyJson []byte
 	var req *http.Request
