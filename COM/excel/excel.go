@@ -1,6 +1,7 @@
 package excel
 
 import (
+	"FinanceTool/Stock/HSB"
 	"errors"
 	"fmt"
 	"github.com/xuri/excelize/v2"
@@ -265,4 +266,28 @@ func GetExcelData(path string, sheet string, v interface{}) error {
 	}
 
 	return nil
+}
+
+func ExcelTest() {
+	err := SetExcelTitle("./excel/format/HSB.xlsx", "资产负债表", HSB.BalanceSheet{})
+	if err != nil {
+		fmt.Println(err)
+	}
+	titles, err := GetExcelTtile("./excel/format/HSB.xlsx", "资产负债表")
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(titles)
+	}
+
+	bsu := HSB.BSU{
+		{
+			SECNAME: "nihao",
+			SECCODE: "000001",
+			F041N:   1000},
+	}
+	SetExcelData("./excel/format/HSB.xlsx", "资产负债表", &bsu)
+	bsu1 := make([]HSB.BalanceSheet, 0, 100)
+	GetExcelData("./excel/format/HSB.xlsx", "资产负债表", &bsu1)
+	fmt.Println(bsu1)
 }

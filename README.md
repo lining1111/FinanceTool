@@ -247,4 +247,18 @@
                 5、综合4的结果，按照指标可信度，从评价体系中计算当前股票的收益。二维数组(股票代码的现时收益预测)
                 6、根据5的结果，结合投资周期的战略，作出调整或者不调整投资组合的决定。
 
-        综合上面的步骤，输入量为[投资周期、本金、利息]。输出量[股票代码(投资金额、投资周期、预期利息)]
+        综合上面的步骤，输入量为[投资周期、本金、利息、投资对象类型[]]。输出量[股票代码(投资金额、投资周期、预期利息)]
+        投资初期步骤
+        1、根据定义的总要求分解成若干小目标
+            func GetAims(attr string) (aim []string, err error)
+        2、将每一个小目标分解成若干实际的财务指标,需要输入特点的评价系统名称
+            func GetRatios(aim string,eval string)(ratio []float64,err error)
+        3、根据各个指标的要求，根据比较分析法，选出当期符合要求的股票代码集合
+            func GetScodes(ratio float64) (scode []string, err error)
+        4、根据单个股票，获取指标集合的历史数据
+                根据股票和单个指标获得历史数据集合 这里提出一个数据单元结构体，就是 历史指标值(数值和时间)
+                func GetSingleRatioHistory(scode string,ratio string) (ratioHistory []DataUnit,err error)
+                将单个指标的历史数据做成一个集合 这里提出一个数据单元集合结构体,就是 指标历史(指标名称+历史指标值数组)
+            func GetRatiosHistory(scode string, ratios []string) (ratiosHistory []RatioHistory, err error)
+        5、根据各个指标的历史数据，通过统计方法，作出分析
+            

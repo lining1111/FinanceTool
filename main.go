@@ -1,10 +1,8 @@
 package main
 
 import (
-	"FinanceTool/COM/excel"
-	"FinanceTool/Stock/HSB"
+	"FinanceTool/analysis"
 	"flag"
-	"fmt"
 	"github.com/golang/glog"
 )
 
@@ -23,28 +21,7 @@ func main() {
 	//HSB.FRGetFromCNINFByScode_test()
 	//cninfo.PublicCodeData_test()
 	//Stock.Test1()
-	err := excel.SetExcelTitle("./excel/format/HSB.xlsx", "资产负债表", HSB.BalanceSheet{})
-	if err != nil {
-		fmt.Println(err)
-	}
-	titles, err := excel.GetExcelTtile("./excel/format/HSB.xlsx", "资产负债表")
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(titles)
-	}
-
-	bsu := HSB.BSU{
-		{
-			SECNAME: "nihao",
-			SECCODE: "000001",
-			F041N:   1000},
-	}
-	excel.SetExcelData("./excel/format/HSB.xlsx", "资产负债表", &bsu)
-	bsu1 := make([]HSB.BalanceSheet, 0, 100)
-	excel.GetExcelData("./excel/format/HSB.xlsx", "资产负债表", &bsu1)
-	fmt.Println(bsu1)
-
+	analysis.ResultTest()
 }
 
 //func main() {
