@@ -58,6 +58,7 @@ type HStatistics struct {
 	//横向-基于指标值从小到大的股票数量和的数组
 	StepLabel      []float64 //数值数组
 	StepCountArray []float64 //股票数量累计数组
+	Mode           float64   //众数，就是找累计数组中最大值的下标，就是这个值出现的概率最大
 
 }
 
@@ -114,6 +115,16 @@ func (hs *HStatistics) Cal(src HDA, step float64) {
 		}
 		hs.StepCountArray[index]++
 	}
+	//众数
+	index := 0
+	max := hs.StepCountArray[0]
+	for k, v := range hs.StepCountArray {
+		if v > max {
+			max = v
+			index = k
+		}
+	}
+	hs.Mode = hs.StepLabel[index]
 
 }
 
