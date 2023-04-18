@@ -3,7 +3,15 @@ package analysis
 import (
 	"errors"
 	"fmt"
+	"gonum.org/v1/gonum/floats"
+	"gonum.org/v1/gonum/mat"
+	"gonum.org/v1/gonum/stat"
 	"math"
+)
+
+const (
+	MaxIterations = 30
+	Precision     = 1e-6
 )
 
 /**
@@ -77,73 +85,29 @@ type DA []float64
 
 //Max 最大值
 func (da DA) Max() float64 {
-	max := da[0]
-	index := 0
-	for k, v := range da {
-		if v > max {
-			max = v
-			index = k
-		}
-	}
-	fmt.Printf("在第%d找到最大值%f", index, max)
-	return max
+	return floats.Max(da)
 }
 
 //Min 最小值
 func (da DA) Min() float64 {
-	min := da[0]
-	index := 0
-	for k, v := range da {
-		if v < min {
-			min = v
-			index = k
-		}
-	}
-	fmt.Printf("在第%d找到最小值%f", index, min)
-	return min
+	return floats.Min(da)
 }
 
 //Avg 平均值
 func (da DA) Avg() float64 {
-	sum := 0.0
-	for _, v := range da {
-		sum += v
-	}
-	return sum / float64(len(da))
-}
-
-//AvgChaArray 与平均值的算术差值数组
-func (da DA) AvgChaArray() DA {
-	avg := da.Avg()
-	ret := DA{}
-	for _, v := range da {
-		item := v - avg
-		ret = append(ret, item)
-	}
-	return ret
-}
-
-//AverageDeviation 平均差值：总体所有单位与其算术平均数的离差绝对值的算术平均数
-func (da DA) AverageDeviation() float64 {
-	aca := da.AvgChaArray()
-	return aca.Avg()
+	return stat.Mean(da, nil)
 }
 
 //如果期望就是平均数，则均方误差就是方差
 
 //Variance 方差：各组数据与它们的平均数的差的平方，和后的平均。衡量这组数据的波动大小
 func (da DA) Variance() float64 {
-	aca := da.AvgChaArray()
-	sum := 0.0
-	for _, v := range aca {
-		sum += math.Pow(math.Abs(v), 2)
-	}
-	return sum / float64(len(aca))
+	return stat.Variance(da, nil)
 }
 
 //StdDeviation 标准差，也叫均方差，即方差的开方。表示分散程度
 func (da DA) StdDeviation() float64 {
-	return math.Sqrt(da.Variance())
+	return stat.StdDev(da, nil)
 }
 
 //IsNormalDistribution 是否为正态分布
@@ -191,14 +155,21 @@ func Cov(da1 DA, da2 DA) (float64, error) {
 	if len(da1) != len(da2) {
 		return 0, errors.New("da1 len should equal da2")
 	}
-	avg_da1 := da1.Avg()
-	avg_da2 := da2.Avg()
-	sum := 0.0
-	for i := 0; i < len(da1); i++ {
-		sum += ((da1[i] - avg_da1) * (da2[i] - avg_da2))
-	}
-	return sum / float64(len(da1)), nil
+	cov := stat.Covariance(da1, da2, nil)
 
+	return cov, nil
+
+}
+
+func TestCov() {
+	da1 := []float64{1, 2, 3, 4, 5}
+	da2 := []float64{0.2, 0.3, 0.4, 0.5, 0.6}
+	cov, err := Cov(da1, da2)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(cov)
+	}
 }
 
 //Corr 相关系数  如果corr为1,则完全正线性相关;如果corr为-1,则完全负线性相关;corr为0，则无有线性相关系数;
@@ -208,8 +179,8 @@ func Corr(da1 DA, da2 DA) (float64, error) {
 	if len(da1) != len(da2) {
 		return 0, errors.New("da1 len should equal da2")
 	}
-	cov, _ := Cov(da1, da2)
-	return cov / (da1.StdDeviation() * da2.StdDeviation()), nil
+
+	return stat.Correlation(da1, da2, nil), nil
 }
 
 func TestCorr() {
@@ -275,9 +246,9 @@ func ERInMulRate(r float64, m uint) float64 {
 
 //chapter 4 资本预算和折旧
 
-//NetPresentValue NPV净现值
-func NetPresentValue(rate float64, values []float64) float64 {
-	npv := 0.0
+//NetPresentValue NPV净现值 rate 利率 values 历史回报 i0初始投资
+func NetPresentValue(rate float64, values []float64, i0 float64) float64 {
+	npv := -i0
 	nper := len(values)
 	for i := 1; i <= nper; i++ {
 		npv += values[i-1] / math.Pow(1+rate, float64(i))
@@ -285,9 +256,84 @@ func NetPresentValue(rate float64, values []float64) float64 {
 	return npv
 }
 
+//IIR 内部回报率 values 历史回报 i0 初始投资
+func IIR(values []float64, i0 float64) (float64, error) {
+	//以穷举法计算
+	var r float64
+	for i := 1; i < 1/Precision; i++ {
+		r = float64(i) * Precision
+		npv := NetPresentValue(r, values, i0)
+		if npv < 1 && npv > 0 {
+			break
+		}
+	}
+	return r, nil
+}
+
+func TestIIR() {
+	v := []float64{3600, 4200, 5500, 6300, 7500}
+	i0 := 15000.0
+	r, _ := IIR(v, i0)
+	fmt.Println(r)
+}
+
 //Kvalue 资本化成本 c 原始成本 s 残值 r利率 m维修成本 n 使用年限
 func Kvalue(c float64, s float64, r float64, m float64, n uint) float64 {
 	npv_fix := (c - s) / (math.Pow(1+r, float64(n)) - 1) //无限维护成本的现值,复利下贴现计算，再算合
 	npv_recover := m / r                                 //无限替换的现值，等比数列
 	return c + npv_fix + npv_recover
+}
+
+func TestKvalue() {
+	c := 65000.0
+	s := 5000.0
+	n := uint(12)
+	r := 0.08
+	m := 3000.0
+	Kb := Kvalue(c, s, r, m, n)
+	fmt.Println(Kb)
+	//已知y 球x，则是求一元一次
+	var x float64 //x消耗值
+	a11 := 1.0
+	a12 := 1 / (math.Pow(1+r, float64(n)) - 1)
+	a := a11 + a12
+	//  65000+x +(65000+x-5000)/a12+m/r
+	//
+	x = ((Kb / 20000 * 30000) - m/r - 65000 - 60000*a12) / a
+	fmt.Println(x)
+	//用矩阵的方式求解
+	matrixRow := mat.Dense{}
+	matrixCol := mat.NewDense(1, 1, []float64{a})
+	d := mat.Dense{}
+	d.Inverse(matrixCol)
+	matrixResult := mat.NewDense(1, 1, []float64{Kb/20000*30000 - 65000 - 60000*a12 - m/r})
+	matrixRow.Mul(matrixResult, &d)
+	fmt.Println(mat.Formatted(&matrixRow, mat.Prefix(" "), mat.Squeeze()))
+}
+
+//chapter 5 盈亏平衡点和杠杆作用
+
+//BEQ 盈亏平衡产量 fc固定成本 p单位价格 v单位成本 tp 目标利润
+func BEQ(fc float64, p float64, v float64, tp float64) float64 {
+	return (fc + tp) / (p - v)
+}
+
+//BER 盈亏平衡收益 fc固定成本 p单位价格 v单位成本 tp 目标利润
+func BER(fc float64, p float64, v float64, tp float64) float64 {
+	return (fc + tp) / (1 - v/p)
+}
+
+//CM 边际贡献 p单位价格 v单位成本
+func CM(p float64, v float64) float64 {
+	return p - v
+}
+
+//CBEQ 现金盈亏平衡产量 fc固定成本 nc任意非现金费用(可以是折旧费等) p单位价格 v单位成本 tp 目标利润
+func CBEQ(fc float64, nc float64, p float64, v float64, tp float64) float64 {
+	return (fc + tp - nc) / (p - v)
+}
+
+//BET 盈亏平衡时间 fc固定成本 p单位价格 v单位成本 q生产率(生产量除以时间) tl时滞(产品从销售出去拿到收益的时间)
+func BET(fc float64, p float64, v float64, q float64, tl float64) float64 {
+	return (fc + p*q*tl) / (q * (p - v))
 }

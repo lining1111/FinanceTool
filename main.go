@@ -14,7 +14,7 @@ func main() {
 	glog.Info("欢迎来到金融与go的世界")
 	glog.Info(TopCreed)
 	glog.Info(Counsel)
-	analysis.TestCorr()
+	analysis.TestIIR()
 	//HSB.BSGetFromCNINFByScode_test()
 	//HSB.ISGetFromCNINFByScode_test()
 	//HSB.CSGetFromCNINFByScode_test()
