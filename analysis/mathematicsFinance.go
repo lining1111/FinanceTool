@@ -337,3 +337,15 @@ func CBEQ(fc float64, nc float64, p float64, v float64, tp float64) float64 {
 func BET(fc float64, p float64, v float64, q float64, tl float64) float64 {
 	return (fc + p*q*tl) / (q * (p - v))
 }
+
+//DOL 运营杠杆程度DOL=Q(p-v)/(Q(p-v)-FC)    固定成本FC 产出Q 单位成本v 单位价格p
+func DOL(Q uint, p float64, v float64, FC float64) float64 {
+	return float64(Q) * (p - v) / (float64(Q)*(p-v) - FC)
+}
+
+//DCL DCL=Q(p-v)/(Q(p-v)-FC-I-(Dps/(1-T))) 产量Q 单位价格p 单位成本v 固定成本FC 利息I 优先股分红Dps 税率T
+func DCL(Q uint, p float64, v float64, FC float64, I float64, Dps float64, T float64) float64 {
+	return float64(Q) * (p - v) / (float64(Q)*(p-v) - FC - I - (Dps / (1 - T)))
+}
+
+// chapter 6 投资
