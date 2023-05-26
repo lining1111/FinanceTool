@@ -3,9 +3,12 @@ package analysis
 import (
 	"errors"
 	"fmt"
+	"gonum.org/v1/gonum/diff/fd"
 	"gonum.org/v1/gonum/floats"
 	"gonum.org/v1/gonum/mat"
+	"gonum.org/v1/gonum/optimize"
 	"gonum.org/v1/gonum/stat"
+	"log"
 	"math"
 )
 
@@ -346,6 +349,44 @@ func DOL(Q uint, p float64, v float64, FC float64) float64 {
 //DCL DCL=Q(p-v)/(Q(p-v)-FC-I-(Dps/(1-T))) 产量Q 单位价格p 单位成本v 固定成本FC 利息I 优先股分红Dps 税率T
 func DCL(Q uint, p float64, v float64, FC float64, I float64, Dps float64, T float64) float64 {
 	return float64(Q) * (p - v) / (float64(Q)*(p-v) - FC - I - (Dps / (1 - T)))
+}
+
+func Testgonum() {
+	fcn := func(p []float64) float64 {
+		return math.Pow(p[0]-3, 2.0) + math.Pow(p[1]-6, 2.0) + 5
+	}
+
+	fcn1 := func(p []float64) float64 {
+		return 2*p[0]*p[0] - 4*p[0]*p[1] + 4*p[1]*p[1] - 6*p[0] - 3*p[1]
+	}
+	hMatrix := mat.SymDense{}
+	x1 := make([]float64, 2)
+	fd.Hessian(&hMatrix, fcn1, x1, &fd.Settings{Formula: fd.Backward})
+
+	grad := func(grad, x []float64) {
+		fd.Gradient(grad, fcn, x, nil)
+	}
+
+	hess := func(h *mat.SymDense, x []float64) {
+		fd.Hessian(h, fcn, x, nil)
+	}
+
+	p := optimize.Problem{
+		Func: fcn,
+		Grad: grad,
+		Hess: hess,
+	}
+
+	//var meth = &optimize.Newton{}
+	var meth = &optimize.LBFGS{}
+	var p0 = []float64{4, 7} // initial value for mu
+
+	res, err := optimize.Minimize(p, p0, nil, meth)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%#v\n", res)
+	fmt.Printf("%#v\n", res.Location)
 }
 
 // chapter 6 投资
